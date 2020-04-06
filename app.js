@@ -3,6 +3,8 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const log = require('bristol');
 const palin = require('palin');
+
+// log
 log.addTarget('console').withFormatter(palin);
 log.info("We're up and running!", {port: 3000});
 
@@ -39,9 +41,10 @@ var preguntasBloque = [];
 var user_answer = '';
 var datos_score = [0,0];
 var accion = '';
-var bloque_global = '';
+var bloque_anterior = '';
 
-bot.onText(/\/start/, (msg) => {
+// comandos
+bot.onText(/^\/start/, (msg) => {
     console.log("Comando start")
     const log_info = `El comando start ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
     log.info(log_info, { scope: 'start' });
@@ -60,7 +63,7 @@ bot.onText(/\/start/, (msg) => {
     bot.sendMessage(cid, response);  
 });
 
-bot.onText(/\/help/, (msg) => {
+bot.onText(/^\/help/, (msg) => {
     console.log("Comando help")
     const log_info = `El comando help ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
     log.info(log_info, { scope: 'help' });
@@ -73,7 +76,7 @@ bot.onText(/\/help/, (msg) => {
     bot.sendMessage(cid, response);  
 });
 
-bot.onText(/\/quiz/, (msg) => {
+bot.onText(/^\/quiz/, (msg) => {
     console.log("Comando quiz")
     const log_info = `El comando quiz ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
     log.info(log_info, { scope: 'quiz' });
@@ -112,16 +115,15 @@ bot.onText(/\/quiz/, (msg) => {
     });
 });
 
-// Matches /test [whatever]
-bot.onText(/\/test (.+)/, function onTestText(msg, match) {
-    console.log("comando test");
-    const log_info = `El comando test ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
-    log.info(log_info, { scope: 'test' });
+bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
+    let comando = msg.text.toString();
+    console.log("comando "+comando);
+    const log_info = `El comando `+comando+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+    log.info(log_info, { scope: comando });
     funciones.writeFile(file_log, log_info);
-    const message = msg;
     const cid = msg.chat.id
-    const bloque_elegido = match[1];
-    accion = "/test "+bloque_elegido.toLowerCase();
+    const bloque_elegido = comando.substring(1, comando.length);
+    accion = comando;
     let bloque = ''
     let autor = ''
     let enunciado = ''
@@ -130,49 +132,58 @@ bot.onText(/\/test (.+)/, function onTestText(msg, match) {
     let opcion_c = ''
     let opcion_d = ''
     let resp_correcta = ''
+
+    if (bloque_anterior == '' | bloque_elegido == bloque_anterior){
+
+        if (bloque_elegido.toLowerCase() == "b1" || bloque_elegido.toLowerCase() == "b2" || bloque_elegido.toLowerCase() == "b3" || bloque_elegido.toLowerCase() == "b4"){
+
+            bloque_anterior = bloque_elegido;
+            bloque = bloque_elegido.toUpperCase();
+            preguntasBloque = funciones.getPreguntasPorBloque(array, bloque); 
     
-    if (bloque_elegido.toLowerCase() == "b1" || bloque_elegido.toLowerCase() == "b2" || bloque_elegido.toLowerCase() == "b3" || bloque_elegido.toLowerCase() == "b4"){
-
-        bloque_global = bloque_elegido;
-        bloque = bloque_elegido.toUpperCase();
-        preguntasBloque = funciones.getPreguntasPorBloque(array, bloque); 
-
-        if( !validaciones.arrayVacio(preguntasBloque, "preguntasBloque") ){
-
-            preguntasBloque = funciones.shuffle(preguntasBloque);
-
-            for(i=0;i<preguntasBloque.length;i++){
-                //console.log(preguntasBloque[i]);
-                autor = preguntasBloque[i][1];
-                enunciado = preguntasBloque[i][2];
-                opcion_a = preguntasBloque[i][3];
-                opcion_b = preguntasBloque[i][4];
-                opcion_c = preguntasBloque[i][5];
-                opcion_d = preguntasBloque[i][6];
-                resp_correcta = preguntasBloque[i][7];
+            if( !validaciones.arrayVacio(preguntasBloque, "preguntasBloque") ){
+    
+                preguntasBloque = funciones.shuffle(preguntasBloque);
+    
+                for(i=0;i<preguntasBloque.length;i++){
+                    //console.log(preguntasBloque[i]);
+                    autor = preguntasBloque[i][1];
+                    enunciado = preguntasBloque[i][2];
+                    opcion_a = preguntasBloque[i][3];
+                    opcion_b = preguntasBloque[i][4];
+                    opcion_c = preguntasBloque[i][5];
+                    opcion_d = preguntasBloque[i][6];
+                    resp_correcta = preguntasBloque[i][7];
+                }
+            
+                response = "* "+bloque+")* "+enunciado+"\n "+opcion_a+" \n "+opcion_b+" \n "+opcion_c+" \n "+opcion_d+" \n\n De *"+autor+"*"
+                
+                datos[0] = enunciado;
+                datos[1] = resp_correcta;
+            
+                bot.sendMessage(cid, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { 
+                    //console.log("response: "+response);
+                    console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]);
+                });
+                
             }
-        
-            response = "* "+bloque+")* "+enunciado+"\n "+opcion_a+" \n "+opcion_b+" \n "+opcion_c+" \n "+opcion_d+" \n\n De *"+autor+"*"
-            
-            datos[0] = enunciado;
-            datos[1] = resp_correcta;
-        
-            bot.sendMessage(cid, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { 
-                //console.log("response: "+response);
-                console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]);
-            });
-            
+            else{
+                const log_error = "Error al cargar el array de preguntas por bloque.";
+                log.error(log_error, { scope: comando })
+                funciones.writeFile(file_log, log_error);
+            }
         }
-        else{
-            const log_error = "Error al cargar el array de preguntas por bloque.";
-            log.error(log_error, { scope: 'test' })
-            funciones.writeFile(file_log, log_error);
+        else {
+            response = "No se ha elegido bien el bloque.\nPara ello debe escribir el comando /bloque.\nEjemplo: /b1"
+            bot.sendMessage(cid, response);
         }
     }
     else {
-        response = "No se ha elegido bien el bloque.\nPara ello debe escribir el comando /test bloque.\nEjemplo: /test b1"
+        response = "Para cambiar de bloque debes escribir el comando /stop y después el comando correspondiente al bloque."
         bot.sendMessage(cid, response);
     }
+    
+
 });
 
 // Listener (handler) for callback data from /quiz command
@@ -196,7 +207,11 @@ bot.on('callback_query', (callbackQuery) => {
         datos_score = funciones.calcularScore(datos_score, datos[1], user_answer);
         response += "El enunciado ha sido: "+datos[0]+"\nTu respuesta ha sido la *"+user_answer+"*.\n*La respuesta correcta es: "+datos[1]+"*\n\n"
         response += "Respuestas *correctas*: "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n\n";
-        response += "Para empezar hacer el test puedes escribir el comando "+accion+".\n"
+        console.log("accion: "+accion);
+        if( accion === ''){
+            accion = "/quiz o /b1 o /b2 o /b3 o /b4";
+        }
+        response += "Para empezar o seguir el test puedes escribir el comando "+accion+".\n"
         response += "Para parar el test puedes escribir el comando /stop."
 
         bot.sendMessage(cid, response, { parse_mode: "Markdown" }).then(() => { 
@@ -206,7 +221,7 @@ bot.on('callback_query', (callbackQuery) => {
     }
 });
 
-bot.onText(/\/stop/, (msg) => {
+bot.onText(/^\/stop/, (msg) => {
     console.log("Comando stop")
     const log_info = `El comando stop ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
     log.info(log_info, { scope: 'stop' });
@@ -214,9 +229,16 @@ bot.onText(/\/stop/, (msg) => {
     const cid = msg.chat.id
     let response = '';
     let contador = 0;
+
     if( datos_score[0] > 0 || datos_score[1] > 0 ){
         contador = datos_score[0]+datos_score[1];
-        response = "De las *"+contador.toString()+"* preguntas.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
+        if (accion == '/b1' | accion == '/b2' | accion == '/b3' | accion == '/b4'  ){
+            let b = accion.substring(accion.length-1);
+            response = "De las *"+contador.toString()+"* preguntas del *bloque "+b+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
+        }
+        else{
+            response = "De las *"+contador.toString()+"* preguntas.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
+        }
         bot.sendMessage(cid, response, { parse_mode: "Markdown" }).then(() => { 
             console.log("response: "+response);
             contador = 0;
@@ -226,49 +248,38 @@ bot.onText(/\/stop/, (msg) => {
         });
     }
     else{
+        accion = "/quiz o /b1 o /b2 o /b3 o /b4";
         response = "No hay puntuación, ya que no has respondido al test o ya habías terminado.\nPara empezar hacer el test puedes escribir el comando "+accion+" y después hacer clic en alguna de las opciones correspondientes."
         bot.sendMessage(cid, response);
     }
     
 });
 
-
-bot.onText(/\/wiki/, (msg) => {
+// Matches /wiki [whatever]
+bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
     console.log("Comando wiki")
     const log_info = `El comando wiki ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
     log.info(log_info, { scope: 'wiki' });
     funciones.writeFile(file_log, log_info);
     const cid = msg.chat.id
+    let search = match[1];
     let response = ''
     let lang = 'es'
-    let texto = msg.text.toString();
 
-    if( texto.length > 0 ){
+    if( search.length > 0 ){
 
-        texto = texto.trim();
-        let comando = texto.substring(0, 5);
-        let search = texto.substring(5, texto.length);
-
-        if( search.length > 0 ){
-
-            search = search.trim();
-            search = search.replace(" ", "_");
-            console.log("search: "+search);
-            response = "https://"+lang+".wikipedia.org/wiki/"+search
-            bot.sendMessage(cid, response, { parse_mode: "HTML" }).then(() => { 
-                console.log("response: "+response);
-            });
-        }
-        /*
-        else{
-            response = "No has puesto nada después de /wiki para buscarlo."
-            bot.sendMessage(cid, response);
-        }*/
+        search = search.trim();
+        search = search.replace(" ", "_");
+        console.log("search: "+search);
+        response = "https://"+lang+".wikipedia.org/wiki/"+search
+        bot.sendMessage(cid, response, { parse_mode: "HTML" }).then(() => { 
+            console.log("response: "+response);
+        });
     }
+    
 });
 
-
-bot.on('message', (msg) => {
+bot.on('message', (msg) =>  {
     console.log("Comando default")
     const log_info = `El comando default ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
     log.info(log_info, { scope: 'default' });
@@ -278,7 +289,7 @@ bot.on('message', (msg) => {
 
     texto = msg.text.toString();
     comando = texto.substring(0, 6);
-    comando = comando.trim();
+    comando = comando.trim().toLowerCase();
     search = texto.substring(5, texto.length);
 
     console.log("texto: "+texto)
@@ -294,15 +305,10 @@ bot.on('message', (msg) => {
     else{
 
         if ( funciones.findCommnad(comando) ){ // si es el comando wiki
+
             if( comando === "/wiki"){
                 if (search.length === 0){
                     response = "No has puesto nada después de /wiki para buscarlo."
-                    bot.sendMessage(cid, response);
-                }
-            }
-            else if( comando === "/test"){
-                if (search.length === 0){
-                    response = "No se ha elegido el bloque.\nPara ello debe escribir el comando /test bloque.\nEjemplo: /test b1"
                     bot.sendMessage(cid, response);
                 }
             }
