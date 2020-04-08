@@ -160,6 +160,24 @@ module.exports = {
       return a;
     },
 
+    replaceSpace: function(str){
+
+        var string = "";
+        var chart = "";
+        for(i=0; i < str.length; i++){  // fixed spelling from 'str.lenght'
+            if (str.charAt(i) == " ") {
+                chart = "_";
+                string = string + chart;
+            }
+            else {
+                chart = str.charAt(i);
+                string = string + chart;
+            }
+        }
+        return string
+
+    },
+
     getRespuestaUser: function(data){
 
       const OPCION_A = 'a'

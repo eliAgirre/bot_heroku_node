@@ -18,6 +18,20 @@ token,
 bot = new TelegramBot(process.env.TOKEN, { webHook: { port : port, host : host } });
 bot.setWebHook(externalUrl + ':443/bot' + token);
 
+// database
+const clientMongo = require('./database/config.js');
+clientMongo.connectToServer( function( err ) {
+    if (err){
+        console.log(err);
+    }
+    else{
+        console.log("database working.");
+    }
+});
+
+// modelos
+const model_pregunta = require('./model/Pregunta.js');
+
 // constantes funciones
 const funciones = require('./util/funciones.js');
 
@@ -91,28 +105,45 @@ bot.onText(/^\/quiz/, (msg) => {
     let opcion_c = ''
     let opcion_d = ''
     let resp_correcta = ''
-    preguntas = funciones.shuffle(preguntas);
-    for(i=1;i<preguntas.length;i++){
-        //console.log(preguntas[i]);
-        bloque = preguntas[i][0];
-        autor = preguntas[i][1];
-        enunciado = preguntas[i][2];
-        opcion_a = preguntas[i][3];
-        opcion_b = preguntas[i][4];
-        opcion_c = preguntas[i][5];
-        opcion_d = preguntas[i][6];
-        resp_correcta = preguntas[i][7];
-    }
+    var db_questions = [];
+    
+    var db = clientMongo.getDb();
+    db.collection('preguntas').find().toArray((err, results) => {
+        if (err){
+             return console.log(err)
+        }       
+        results.forEach(function(obj) {
+            //console.log("obj: "+ JSON.stringify(obj));
+            let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
+            db_questions.push(preg);
+        });
 
-    response = "* "+bloque+")* "+enunciado+"\n "+opcion_a+" \n "+opcion_b+" \n "+opcion_c+" \n "+opcion_d+" \n\n De *"+autor+"*"
+        db_questions = funciones.shuffle(db_questions);
 
-    datos[0] = enunciado;
-    datos[1] = resp_correcta;
+        for(i=1;i<db_questions.length;i++){
+            //console.log(db_questions[i]);
+            bloque = db_questions[i].bloque;
+            autor = db_questions[i].autor;
+            enunciado = db_questions[i].enunciado;
+            opcion_a = db_questions[i].opcion_a;
+            opcion_b = db_questions[i].opcion_b;
+            opcion_c = db_questions[i].opcion_c;
+            opcion_d = db_questions[i].opcion_d;
+            resp_correcta = db_questions[i].resp_correcta;
+        }
+    
+        response = "* "+bloque+")* "+enunciado+"\n "+opcion_a+" \n "+opcion_b+" \n "+opcion_c+" \n "+opcion_d+" \n\n De *"+autor+"*"
+    
+        datos[0] = enunciado;
+        datos[1] = resp_correcta;
+    
+        bot.sendMessage(cid, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { 
+            //console.log("response: "+response);
+            console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]);
+        });
 
-    bot.sendMessage(cid, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { 
-        //console.log("response: "+response);
-        console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]);
     });
+
 });
 
 bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
@@ -132,6 +163,7 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
     let opcion_c = ''
     let opcion_d = ''
     let resp_correcta = ''
+    var db = clientMongo.getDb();
 
     if (bloque_anterior == '' | bloque_elegido == bloque_anterior){
 
@@ -139,39 +171,55 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
 
             bloque_anterior = bloque_elegido;
             bloque = bloque_elegido.toUpperCase();
-            preguntasBloque = funciones.getPreguntasPorBloque(array, bloque); 
-    
-            if( !validaciones.arrayVacio(preguntasBloque, "preguntasBloque") ){
-    
-                preguntasBloque = funciones.shuffle(preguntasBloque);
-    
-                for(i=0;i<preguntasBloque.length;i++){
-                    //console.log(preguntasBloque[i]);
-                    autor = preguntasBloque[i][1];
-                    enunciado = preguntasBloque[i][2];
-                    opcion_a = preguntasBloque[i][3];
-                    opcion_b = preguntasBloque[i][4];
-                    opcion_c = preguntasBloque[i][5];
-                    opcion_d = preguntasBloque[i][6];
-                    resp_correcta = preguntasBloque[i][7];
+            db.collection('preguntas').find({"bloque":bloque}).toArray((err, results) => {
+
+                if (err){
+                    return console.log(err)
                 }
-            
-                response = "* "+bloque+")* "+enunciado+"\n "+opcion_a+" \n "+opcion_b+" \n "+opcion_c+" \n "+opcion_d+" \n\n De *"+autor+"*"
                 
-                datos[0] = enunciado;
-                datos[1] = resp_correcta;
-            
-                bot.sendMessage(cid, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { 
-                    //console.log("response: "+response);
-                    console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]);
+                results.forEach(function(obj) {
+                    //console.log("obj: "+ JSON.stringify(obj));
+                    let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
+                    preguntasBloque.push(preg);
+
                 });
+
+                //preguntasBloque = funciones.getPreguntasPorBloque(array, bloque); 
+        
+                if( !validaciones.arrayVacio(preguntasBloque, "preguntasBloque") ){
+        
+                    preguntasBloque = funciones.shuffle(preguntasBloque);
+        
+                    for(i=0;i<preguntasBloque.length;i++){
+                        //console.log(preguntasBloque[i]);
+                        bloque = preguntasBloque[i].bloque;
+                        autor = preguntasBloque[i].autor;
+                        enunciado = preguntasBloque[i].enunciado;
+                        opcion_a = preguntasBloque[i].opcion_a;
+                        opcion_b = preguntasBloque[i].opcion_b;
+                        opcion_c = preguntasBloque[i].opcion_c;
+                        opcion_d = preguntasBloque[i].opcion_d;
+                        resp_correcta = preguntasBloque[i].resp_correcta;
+                    }
                 
-            }
-            else{
-                const log_error = "Error al cargar el array de preguntas por bloque.";
-                log.error(log_error, { scope: comando })
-                funciones.writeFile(file_log, log_error);
-            }
+                    response = "* "+bloque+")* "+enunciado+"\n "+opcion_a+" \n "+opcion_b+" \n "+opcion_c+" \n "+opcion_d+" \n\n De *"+autor+"*"
+                    
+                    datos[0] = enunciado;
+                    datos[1] = resp_correcta;
+                
+                    bot.sendMessage(cid, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { 
+                        //console.log("response: "+response);
+                        console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]);
+                    });
+                    
+                }
+                else{
+                    const log_error = "Error al cargar el array de preguntas por bloque.";
+                    log.error(log_error, { scope: comando })
+                    funciones.writeFile(file_log, log_error);
+                }
+
+            });
         }
         else {
             response = "No se ha elegido bien el bloque.\nPara ello debe escribir el comando /bloque.\nEjemplo: /b1"
@@ -269,7 +317,8 @@ bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
     if( search.length > 0 ){
 
         search = search.trim();
-        search = search.replace(" ", "_");
+        //search = search.replace(" ", "_");
+        search = funciones.replaceSpace(search);
         console.log("search: "+search);
         response = "https://"+lang+".wikipedia.org/wiki/"+search
         bot.sendMessage(cid, response, { parse_mode: "HTML" }).then(() => { 
