@@ -11,6 +11,11 @@ module.exports = {
             'b2'          : 'Test bloque 2 - Tecnología básica.',
             'b3'          : 'Test bloque 3 - Programación.',
             'b4'          : 'Test bloque 4 - Sistemas.',
+            '2014'        : 'Test 2014 INAP',
+            '2015'        : 'Test 2015 INAP',
+            '2016'        : 'Test 2016 INAP',
+            '2017'        : 'Test 2017 INAP',
+            '2018'        : 'Test 2018 INAP',
             'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
             'wiki'        : 'Busca información en la wikipedia en castellano.'
         }

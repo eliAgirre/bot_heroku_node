@@ -52,10 +52,12 @@ var array = funciones.readFile(file_preguntas);
 var preguntas = funciones.getPreguntas(array);
 var datos = [] // enunciado y resp_correcta
 var preguntasBloque = [];
+var preguntasAnio = [];
 var user_answer = '';
 var datos_score = [0,0];
 var accion = '';
 var bloque_anterior = '';
+var anio_anterior = '';
 
 // comandos
 bot.onText(/^\/start/, (msg) => {
@@ -146,6 +148,7 @@ bot.onText(/^\/quiz/, (msg) => {
 
 });
 
+// test por bloque
 bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
     let comando = msg.text.toString();
     console.log("comando "+comando);
@@ -234,6 +237,101 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
 
 });
 
+// test por año
+bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
+    let comando = msg.text.toString();
+    console.log("comando "+comando);
+    const log_info = `El comando `+comando+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+    log.info(log_info, { scope: comando });
+    funciones.writeFile(file_log, log_info);
+    const cid = msg.chat.id
+    const anio_elegido = comando.substring(1, comando.length);
+    accion = comando;
+    let bloque = ''
+    let autor = ''
+    let enunciado = ''
+    let opcion_a = ''
+    let opcion_b = ''
+    let opcion_c = ''
+    let opcion_d = ''
+    let resp_correcta = ''
+    var db = clientMongo.getDb();
+
+    if ( anio_anterior == '' | anio_elegido == anio_anterior){
+
+        console.log("año elegido: "+anio_elegido);
+
+        if ( anio_elegido == "2014" || anio_elegido == "2015" || anio_elegido == "2016" || anio_elegido == "2017" || anio_elegido == "2018" ){
+
+            anio_anterior = anio_elegido;
+            let autorLI1 = "TAI-LI-"+anio_elegido+"-1";
+            //let autorLI2 = "TAI-LI-"+anio_elegido+"-2";
+            let autorPI1 = "TAI-PI-"+anio_elegido+"-1";
+            //let autorPI2 = "TAI-PI-"+anio_elegido+"-2";
+
+            db.collection('preguntas').find({$or:[{"autor":autorLI1},{"autor":autorPI1}]}).toArray((err, results) => {
+
+                if (err){
+                    return console.log(err)
+                }
+                
+                results.forEach(function(obj) {
+                    //console.log("obj: "+ JSON.stringify(obj));
+                    let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
+                    preg.showPregunta();
+                    preguntasAnio.push(preg);
+
+                });
+
+            });
+
+            if( !validaciones.arrayVacio(preguntasAnio, "preguntasAnio") ){
+        
+                preguntasAnio = funciones.shuffle(preguntasAnio);
+    
+                for(i=0;i<preguntasAnio.length;i++){
+                    //console.log(preguntasAnio[i]);
+                    bloque = preguntasAnio[i].bloque;
+                    autor = preguntasAnio[i].autor;
+                    enunciado = preguntasAnio[i].enunciado;
+                    opcion_a = preguntasAnio[i].opcion_a;
+                    opcion_b = preguntasAnio[i].opcion_b;
+                    opcion_c = preguntasAnio[i].opcion_c;
+                    opcion_d = preguntasAnio[i].opcion_d;
+                    resp_correcta = preguntasAnio[i].resp_correcta;
+                }
+            
+                response = "* "+bloque+")* "+enunciado+"\n "+opcion_a+" \n "+opcion_b+" \n "+opcion_c+" \n "+opcion_d+" \n\n De *"+autor+"*"
+                
+                datos[0] = enunciado;
+                datos[1] = resp_correcta;
+            
+                bot.sendMessage(cid, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { 
+                    //console.log("response: "+response);
+                    console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]);
+                });
+                
+            }
+            else{
+                const log_error = "Error al cargar el array de preguntas por año.";
+                log.error(log_error, { scope: comando })
+                funciones.writeFile(file_log, log_error);
+            }
+
+        }
+        else{
+            response = "No se ha elegido bien el año.\nPara ello debe escribir el comando /año.\nEjemplo: /2015"
+            bot.sendMessage(cid, response);
+        }
+    
+    }
+    else{
+        response = "Para cambiar de año debes escribir el comando /stop y después el comando correspondiente al año."
+        bot.sendMessage(cid, response);
+    }
+
+});
+
 // Listener (handler) for callback data from /quiz command
 bot.on('callback_query', (callbackQuery) => {
     console.log("callback_query");
@@ -257,7 +355,7 @@ bot.on('callback_query', (callbackQuery) => {
         response += "Respuestas *correctas*: "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n\n";
         console.log("accion: "+accion);
         if( accion === ''){
-            accion = "/quiz o /b1 o /b2 o /b3 o /b4";
+            accion = "/quiz o /b1 o /b2 o /b3 o /b4 o /2015";
         }
         response += "Para empezar o seguir el test puedes escribir el comando "+accion+".\n"
         response += "Para parar el test puedes escribir el comando /stop."
@@ -284,6 +382,10 @@ bot.onText(/^\/stop/, (msg) => {
             let b = accion.substring(accion.length-1);
             response = "De las *"+contador.toString()+"* preguntas del *bloque "+b+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
         }
+        else if (accion == '/2014' | accion == '/2015' | accion == '/2016' | accion == '/2017' | accion == '/2018'  ){
+            let anio = accion.substring(1,accion.length);
+            response = "De las *"+contador.toString()+"* preguntas del *año "+anio+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
+        }
         else{
             response = "De las *"+contador.toString()+"* preguntas.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
         }
@@ -296,7 +398,7 @@ bot.onText(/^\/stop/, (msg) => {
         });
     }
     else{
-        accion = "/quiz o /b1 o /b2 o /b3 o /b4";
+        accion = "/quiz o /b1 o /b2 o /b3 o /b4 o /2015";
         response = "No hay puntuación, ya que no has respondido al test o ya habías terminado.\nPara empezar hacer el test puedes escribir el comando "+accion+" y después hacer clic en alguna de las opciones correspondientes."
         bot.sendMessage(cid, response);
     }
