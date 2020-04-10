@@ -52,6 +52,28 @@ module.exports = {
                     }
 
         return keyboard;
+    },
+
+    arrayCommands: function(){
+
+        let array_commands = [  "/start",   //0
+                                "/help",    //1
+                                "/quiz",    //2
+                                "/b1",      //3
+                                "/b2",      //4
+                                "/b3",      //5
+                                "/b4",      //6
+                                "/2014",    //7
+                                "/2015",    //8
+                                "/2016",    //9
+                                "/2017",    //10
+                                "/2018",    //11
+                                "/stop",    //12
+                                "/wiki"     //13
+                            ];
+
+        return array_commands;
+
     }
 
 }
