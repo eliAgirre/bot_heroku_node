@@ -171,6 +171,16 @@ module.exports = {
 
     },
 
+    ordenarFecha: function(date){
+
+      var fecha = date.toString();
+      var month = fecha.substring(0,2);
+      var day = fecha.substring(3, 5);
+      var year = fecha.substring(6,10);
+      return day+"-"+month+"-"+year;
+
+    },
+
     replaceSpace: function(str, character){
 
         var string = "";
@@ -297,6 +307,38 @@ module.exports = {
       }
 
       return datos_pregunta;
+
+    },
+
+    getFecha: function(){
+
+      let fecha = '';
+
+      let today = new Date().toLocaleDateString("es-ES", {  
+        day : '2-digit',
+        month : '2-digit',
+        year : 'numeric'
+      })
+      fecha = this.ordenarFecha(today);
+      //fecha = this.replaceCharacters(today,"/","-");
+      console.log(fecha);
+
+      return fecha;
+    },
+
+    getHora: function(){
+
+      let hora = '';
+
+      hora = new Date().toLocaleTimeString("es-ES", {  
+          hour: '2-digit',
+          minute:'2-digit',
+          hour12: false,
+          timeZone: 'Europe/Madrid'
+      })
+      //console.log(hora);
+
+      return hora;
 
     }
     

@@ -52,6 +52,7 @@ const command = listas.arrayCommands();
 // otros constantes
 const coleccion_preguntas="preguntas";
 const coleccion_resp_users="respuestas_user";
+const coleccion_user_searches="user_searches";
 const markdown = "Markdown";
 const error_cargar_array = "Error al cargar el array de preguntas por";
 const error_no_bien_elegido = "No se ha elegido bien.\nPara ello debe escribir el comando.\nEjemplo: ";
@@ -348,19 +349,8 @@ bot.on('callback_query', (callbackQuery) => {
         response += "Para empezar o seguir el test puedes escribir el comando "+accion+".\n"
         response += "Para parar el test puedes escribir el comando "+command[12]+"."
 
-        let today = new Date().toLocaleDateString("es-ES", {  
-            day : '2-digit',
-            month : '2-digit',
-            year : 'numeric'
-        })
-        let hoy = funciones.replaceCharacters(today,"/","-");
-        //console.log(hoy);
-        let time = new Date().toLocaleTimeString("es-ES", {  
-            hour: '2-digit',
-            minute:'2-digit',
-            hour12: false
-        })
-        console.log(time);
+        let hoy = funciones.getFecha();
+        let time = funciones.getHora();
 
         let ObjectID = mongo.ObjectID;
         let doc = { "_id": new ObjectID(), "user": msg.chat.username, "accion": accion, "bloque": preg[0], "autor": preg[1], "enunciado": datos[0], "resp_correcta": datos[1], "resp_user": data, "tipo_respuesta": tipo_respuesta, "fecha": hoy+" "+time.toString()  };
@@ -369,6 +359,7 @@ bot.on('callback_query', (callbackQuery) => {
         bot.sendMessage(cid, response, { parse_mode: markdown }).then(() => { 
             console.log("response: "+response);
             user_answer = '';
+            // insert into db
             db.collection(coleccion_resp_users).insertOne(doc, (err, result) => {
                 if(err){
                     console.log(err);
@@ -376,7 +367,7 @@ bot.on('callback_query', (callbackQuery) => {
                     funciones.writeFile(file_log, err+" in inserOne "+coleccion_resp_users);
                 }
                 else{
-                    const log_msg="Document inserted";
+                    const log_msg="Document inserted in "+coleccion_resp_users;
                     console.log(log_msg);
                     log.info(log_msg, { scope: 'insertOne '+coleccion_resp_users});
                     funciones.writeFile(file_log, log_msg);
@@ -395,6 +386,7 @@ bot.onText(/^\/stop/, (msg) => {
     const cid = msg.chat.id
     let response = '';
     let contador = 0;
+    var db = clientMongo.getDb();
 
     if( datos_score[0] > 0 || datos_score[1] > 0 ){
         contador = datos_score[0]+datos_score[1];
@@ -417,6 +409,14 @@ bot.onText(/^\/stop/, (msg) => {
         else{
             response = "De las *"+contador.toString()+"* preguntas.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
         }
+
+        let hoy = funciones.getFecha();
+        let time = funciones.getHora();
+
+        let ObjectID = mongo.ObjectID;
+        let doc = { "_id": new ObjectID(), "user": msg.chat.username, "accion": "/stop", "bloque": "", "autor": "", "enunciado": "", "resp_correcta": "", "resp_user": "", "tipo_respuesta": "", "fecha": hoy+" "+time.toString()  };
+        //console.log("doc: "+ JSON.stringify(doc));
+
         bot.sendMessage(cid, response, { parse_mode: markdown }).then(() => { 
             console.log("response: "+response);
             contador = 0;
@@ -424,6 +424,20 @@ bot.onText(/^\/stop/, (msg) => {
             datos = ['',''];
             user_answer = '';
             accion_anterior = '';
+            // insert into db
+            db.collection(coleccion_resp_users).insertOne(doc, (err, result) => {
+                if(err){
+                    console.log(err);
+                    log.error(err, { scope: 'insertOne '+coleccion_resp_users});
+                    funciones.writeFile(file_log, err+" in inserOne "+coleccion_resp_users);
+                }
+                else{
+                    const log_msg="Document inserted in "+coleccion_resp_users;
+                    console.log(log_msg);
+                    log.info(log_msg, { scope: 'insertOne '+coleccion_resp_users});
+                    funciones.writeFile(file_log, log_msg);
+                }
+            })
         });
     }
     else{
@@ -443,14 +457,37 @@ bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
     let search = match[1];
     let response = ''
     let lang = 'es'
+    var db = clientMongo.getDb();
 
     if( search.length > 0 ){
         search = search.trim();
         search = funciones.replaceSpace(search,"_");
         console.log("search: "+search);
         response = "https://"+lang+".wikipedia.org/wiki/"+search
+
+        let hoy = funciones.getFecha();
+        let time = funciones.getHora();
+
+        let ObjectID = mongo.ObjectID;
+        let doc = { "_id": new ObjectID(), "user": msg.chat.username, "url": response, "fecha": hoy+" "+time.toString()  };
+        //console.log("doc: "+ JSON.stringify(doc));
+
         bot.sendMessage(cid, response, { parse_mode: "HTML" }).then(() => { 
             console.log("response: "+response);
+            // insert into db
+            db.collection(coleccion_user_searches).insertOne(doc, (err, result) => {
+                if(err){
+                    console.log(err);
+                    log.error(err, { scope: 'insertOne '+coleccion_user_searches});
+                    funciones.writeFile(file_log, err+" in inserOne "+coleccion_user_searches);
+                }
+                else{
+                    const log_msg="Document inserted in "+coleccion_user_searches;
+                    console.log(log_msg);
+                    log.info(log_msg, { scope: 'insertOne '+coleccion_user_searches});
+                    funciones.writeFile(file_log, log_msg);
+                }
+            })
         });
     } 
 });
@@ -468,11 +505,6 @@ bot.on('message', (msg) =>  {
     comando = texto.substring(0, 6);
     comando = comando.trim().toLowerCase();
     search = texto.substring(5, texto.length);
-
-    console.log("texto: "+texto)
-    console.log("comando: "+comando)
-    console.log("search: "+search)
-    console.log("tam search: "+search.length)
 
     if ( !funciones.findCommnad(comando) ){ // si no es ningun comando
         
