@@ -5,6 +5,9 @@ const commands = listas.listCommand();
 var knownUsers = [];
 var userStep = [];
 
+// operaciones db
+const db_operations = require('./db_operations.js');
+
 module.exports = {
 
     knownUsers: function(uid){
@@ -62,7 +65,7 @@ module.exports = {
     writeFile: function(filename, content){
 
       let fs = require('fs');
-      var guardado = false;
+      //var guardado = false;
       //var content = fs.readFileSync(filename);
       fs.appendFile(filename, content, function (err) {
         if (err){
@@ -70,12 +73,12 @@ module.exports = {
           console.log(err);
         }
         else{
-          console.log('Saved!');
-          guardado = true;
+          console.log('Saved in log file!');
+          //guardado = true;
         }
         
       });
-      return guardado;
+      //return guardado;
 
     },
 
@@ -339,6 +342,28 @@ module.exports = {
       //console.log(hora);
 
       return hora;
+
+    },
+
+    getResponse: function(m_datos){
+
+      return response = "* "+m_datos.bloque+")* "+m_datos.enunciado+"\n "+m_datos.opcion_a+" \n "+m_datos.opcion_b+" \n "+m_datos.opcion_c+" \n "+m_datos.opcion_d+" \n\n De *"+m_datos.autor+"*";
+
+    },
+
+    getDatos: function(datos, m_datos){
+
+      datos[0] = m_datos.enunciado;
+      datos[1] = m_datos.resp_correcta;
+      return datos;
+
+    },
+
+    getDatosPreg: function(preg, m_datos){
+
+      preg[0] = m_datos.bloque;
+      preg[1] = m_datos.autor;
+      return preg;
 
     }
     
