@@ -83,10 +83,8 @@ bot.onText(/^\/quiz/, (msg) => {
         accion_anterior = accion;
 
         db.collection(coleccion_preguntas).find().toArray((err, results) => {
-            if (err){
-                log.error(err, { scope: 'find '+coleccion_preguntas} );
-                console.log(err)
-            }      
+            if (err)
+                log.error(err, { scope: 'find '+coleccion_preguntas } );
 
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
                 let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
@@ -98,10 +96,7 @@ bot.onText(/^\/quiz/, (msg) => {
             response = funciones.getResponse(m_datos);
             datos = funciones.getDatos(datos, m_datos);
             preg = funciones.getDatosPreg(preg, m_datos);
-    
-            bot.sendMessage(cid, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { 
-                console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]);
-            });
+            bot.sendMessage(cid, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
         });
     }
     else
@@ -131,11 +126,8 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
                 bloque = bloque_elegido.toUpperCase();
 
                 db.collection(coleccion_preguntas).find({ "bloque" : bloque }).toArray((err, results) => {
-
-                    if (err){
-                        log.error(err, { scope: 'find bloque'+coleccion_preguntas});
-                        console.log(err)
-                    }
+                    if (err)
+                        log.error(err, { scope: 'find bloque'+coleccion_preguntas } );
                     
                     results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
                         let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
@@ -150,10 +142,7 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
                         response = funciones.getResponse(m_datos);
                         datos = funciones.getDatos(datos, m_datos);
                         preg = funciones.getDatosPreg(preg, m_datos);
-                    
-                        bot.sendMessage(cid, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { 
-                            console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]);
-                        });
+                        bot.sendMessage(cid, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
                     }
                     else
                         log.error(error_cargar_array+" bloque.", { scope: comando } )
@@ -192,11 +181,8 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
                 let autorPI1 = "TAI-PI-"+anio_elegido+"-1";
 
                 db.collection(coleccion_preguntas).find({$or:[{ "autor" : autorLI1 },{ "autor" : autorPI1 } ]}).toArray((err, results) => {
-
-                    if (err){
-                        log.error(err, { scope: 'find autor '+autorLI1+" "+autorPI1+" "+coleccion_preguntas});
-                        console.log(err);
-                    }
+                    if (err)
+                        log.error(err, { scope: 'find autor '+autorLI1+" "+autorPI1+" "+coleccion_preguntas } );
                     
                     results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
                         let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
@@ -211,10 +197,7 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
                     response = funciones.getResponse(m_datos);
                     datos = funciones.getDatos(datos, m_datos);
                     preg = funciones.getDatosPreg(preg, m_datos);
-
-                    bot.sendMessage(cid, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { 
-                        console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]);
-                    });   
+                    bot.sendMessage(cid, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
                 }
                 else
                     log.error(error_cargar_array+" año.", { scope: comando })
@@ -233,9 +216,9 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
 bot.on('callback_query', (callbackQuery) => {
     const msg = callbackQuery.message;
     let response = "No has respondido a la pregunta";
-    if( callbackQuery.data == '') // si no hay dato
+    if( callbackQuery.data == '') 
         bot.sendMessage(msg.chat.id, response); 
-    else if( callbackQuery.data != ''){ // si hay dato
+    else if( callbackQuery.data != ''){
         response = oper.callbackQuery(msg, callbackQuery.data, datos_score, datos, accion);
         tipo_respuesta = funciones.tipoRespuesta(datos[1], callbackQuery.data);
         let doc = oper.createCallbackObject(msg, callbackQuery.data, accion, preg, datos, tipo_respuesta);
@@ -248,10 +231,7 @@ bot.onText(/^\/stop/, (msg) => {
     let response = oper.commandStop(msg, datos_score, accion);
     if( response.substring(0,2).trim() == "De" ){
         let doc = oper.createStopObject(msg);
-        bot.sendMessage(msg.chat.id, response, { parse_mode: markdown }).then(() => { 
-            contador = 0, datos_score = [0,0], datos = ['',''], user_answer = '', accion_anterior = '', accion = '';
-            db_operations.insertRespUser(doc); // insert resp user stop in db
-        });
+        bot.sendMessage(msg.chat.id, response, { parse_mode: markdown }).then(() => { contador = 0, datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = ''; db_operations.insertRespUser(doc); });
     }
     else
         bot.sendMessage(msg.chat.id, response);
