@@ -5,6 +5,7 @@ const logs = require('./logs.js');
 const funciones = require('./funciones.js');
 // constantes listas/arrays
 const listas = require('./listas.js');
+const commands = listas.listCommand();
 const command = listas.arrayCommands();
 
 module.exports = {
@@ -24,6 +25,8 @@ module.exports = {
     commandHelp: function(msg){
         logs.logHelp(msg);
         let response = "Los siguientes comando están disponibles para este bot: \n" 
+        for (key in commands)  // generate help text out of the commands dictionary defined at the top 
+            response += "/"+key +' : '+commands[key]+"\n"
         return response;   
     },
 

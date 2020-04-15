@@ -1,75 +1,45 @@
-// requires
+// requires --------------
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const log = require('bristol');
 const palin = require('palin');
-// log
 log.addTarget('console').withFormatter(palin);
 log.info("We're up and running!", {port: 3000});
-// webhook
+// webhook ---------------
 const token = process.env.TOKEN;
 port = process.env.PORT || 443, host = '0.0.0.0',  // probably this change is not required
 externalUrl = process.env.CUSTOM_ENV_VARIABLE, token,
 bot = new TelegramBot(process.env.TOKEN, { webHook: { port : port, host : host } });
 bot.setWebHook(externalUrl + ':443/bot' + token);
-// database
+// database --------------
 const clientMongo = require('./database/config.js');
 clientMongo.connectToServer( function( err ) {
     if (err) { console.log(err); }
     else { console.log("database working."); }
 });
-// colecciones db
-const coleccion_preguntas="preguntas";
-// modelos
-const model_pregunta = require('./model/Pregunta.js');
-// constantes funciones
-const funciones = require('./util/funciones.js');
-// constantes validaciones
-const validaciones = require('./util/validaciones.js');
-// operaciones db
-const logs = require('./util/logs.js');
-// operaciones db
-const db_operations = require('./util/db_operations.js');
-// constantes operaciones
-const oper = require('./util/comandos.js');
-// constantes listas/arrays
-const listas = require('./util/listas.js');
-const commands = listas.listCommand();
+// otros constantes ------
+const coleccion_preguntas="preguntas"; // colecciones db
+const model_pregunta = require('./model/Pregunta.js'); // modelos
+const funciones = require('./util/funciones.js'); // constantes funciones
+const validaciones = require('./util/validaciones.js'); // constantes validaciones
+const logs = require('./util/logs.js'); // operaciones db
+const db_operations = require('./util/db_operations.js'); // operaciones db
+const oper = require('./util/comandos.js'); // constantes operaciones
+const listas = require('./util/listas.js'); // constantes listas/arrays
 const keyboard = listas.getKeyboard();
 const command = listas.arrayCommands();
-// constantes errores
+// constantes errores ------
 const error_cargar_array = "Error al cargar el array de preguntas por";
 const error_no_bien_elegido = "No se ha elegido bien.\nPara ello debe escribir el comando.\nEjemplo: ";
 const error_cambio_comando = "Para cambiar debes escribir el comando "+command[12]+" y después el comando correspondiente al";
-// otros constantes
-const markdown = "Markdown";
-// variables globales
-//var array = funciones.readFile(file_preguntas);
-//var preguntas = funciones.getPreguntas(array);
-var datos_score = [0,0];
-var datos = [] // enunciado y resp_correcta
-var preguntasBloque = [];
-var preguntasAnio = [];
-var preg = [];
-var accion = '';
-var accion_anterior = '';
-var bloque_anterior = '';
-var anio_anterior = '';
+// variables globales- ------ var array = funciones.readFile(file_preguntas); var preguntas = funciones.getPreguntas(array);
+var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [];
+var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '';
 
-// comandos
-bot.onText(/^\/start/, (msg) => {
-    datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '';
-    bot.sendMessage(msg.chat.id, oper.commandStart(msg));  
-});
-
+// comaandos
+bot.onText(/^\/start/, (msg) => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = ''; bot.sendMessage(msg.chat.id, oper.commandStart(msg)); });
 // help
-bot.onText(/^\/help/, (msg) => {
-    let response = oper.commandHelp(msg);
-    for (key in commands)  // generate help text out of the commands dictionary defined at the top 
-        response += "/"+key +' : '+commands[key]+"\n"
-    bot.sendMessage(msg.chat.id, response);  
-});
-
+bot.onText(/^\/help/, (msg) => { bot.sendMessage(msg.chat.id, oper.commandHelp(msg)); });
 // quiz
 bot.onText(/^\/quiz/, (msg) => {
     logs.logQuiz(msg);
@@ -93,7 +63,7 @@ bot.onText(/^\/quiz/, (msg) => {
             let response = funciones.getResponse(m_datos);
             datos = funciones.getDatos(datos, m_datos);
             preg = funciones.getDatosPreg(preg, m_datos);
-            bot.sendMessage(msg.chat.id, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
+            bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
         });
     }
     else
@@ -133,7 +103,7 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
                         let response = funciones.getResponse(m_datos);
                         datos = funciones.getDatos(datos, m_datos);
                         preg = funciones.getDatosPreg(preg, m_datos);
-                        bot.sendMessage(msg.chat.id, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
+                        bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
                     }
                     else
                         log.error(error_cargar_array+" bloque.", { scope: comando } )
@@ -185,7 +155,7 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
                     let response = funciones.getResponse(m_datos);
                     datos = funciones.getDatos(datos, m_datos);
                     preg = funciones.getDatosPreg(preg, m_datos);
-                    bot.sendMessage(msg.chat.id, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
+                    bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
                 }
                 else
                     log.error(error_cargar_array+" año.", { scope: comando })
@@ -209,7 +179,7 @@ bot.on('callback_query', (callbackQuery) => {
         let response = oper.callbackQuery(msg, callbackQuery.data, datos_score, datos, accion);
         let tipo_respuesta = funciones.tipoRespuesta(datos[1], callbackQuery.data);
         let doc = oper.createCallbackObject(msg, callbackQuery.data, accion, preg, datos, tipo_respuesta);
-        bot.sendMessage(msg.chat.id, response, { parse_mode: markdown }).then(() => { db_operations.insertRespUser(doc); });
+        bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown" }).then(() => { db_operations.insertRespUser(doc); });
     }
 });
 
@@ -218,13 +188,13 @@ bot.onText(/^\/stop/, (msg) => {
     let response = oper.commandStop(msg, datos_score, accion);
     if( response.substring(0,2).trim() == "De" ){
         let doc = oper.createStopObject(msg);
-        bot.sendMessage(msg.chat.id, response, { parse_mode: markdown }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = ''; db_operations.insertRespUser(doc); });
+        bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = ''; db_operations.insertRespUser(doc); });
     }
     else
         bot.sendMessage(msg.chat.id, response);
 });
 
-// Matches /wiki [whatever]
+// wiki [whatever]
 bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
     let response = oper.commandWiki(msg, match[1]);
     if( response.length > 0 ){
@@ -233,7 +203,5 @@ bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
     }
 });
 
-// command default
-bot.on('message', (msg) =>  {
-    bot.sendMessage(msg.chat.id, oper.commandDefault(msg));
-});
+// default
+bot.on('message', (msg) =>  { bot.sendMessage(msg.chat.id, oper.commandDefault(msg)); });
