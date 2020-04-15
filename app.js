@@ -48,8 +48,8 @@ const markdown = "Markdown";
 //var preguntas = funciones.getPreguntas(array);
 var datos_score = [0,0];
 var datos = [] // enunciado y resp_correcta
-var preguntasAnio = [];
 var preguntasBloque = [];
+var preguntasAnio = [];
 var preg = [];
 var accion = '';
 var accion_anterior = '';
@@ -73,18 +73,15 @@ bot.onText(/^\/help/, (msg) => {
 // quiz
 bot.onText(/^\/quiz/, (msg) => {
     logs.logQuiz(msg);
-    const cid = msg.chat.id
-    var db = clientMongo.getDb();
-    var db_questions = [];
-    let response = '';
+    let db = clientMongo.getDb();
+    let db_questions = []
     accion = command[2];
 
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
 
         db.collection(coleccion_preguntas).find().toArray((err, results) => {
-            if (err)
-                log.error(err, { scope: 'find '+coleccion_preguntas } );
+            if (err) { log.error(err, { scope: 'find '+coleccion_preguntas } ); }
 
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
                 let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
@@ -93,25 +90,22 @@ bot.onText(/^\/quiz/, (msg) => {
     
             db_questions = funciones.shuffle(db_questions);
             let m_datos = funciones.getDatosPregunta(db_questions);
-            response = funciones.getResponse(m_datos);
+            let response = funciones.getResponse(m_datos);
             datos = funciones.getDatos(datos, m_datos);
             preg = funciones.getDatosPreg(preg, m_datos);
-            bot.sendMessage(cid, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
+            bot.sendMessage(msg.chat.id, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
         });
     }
     else
-        bot.sendMessage(cid, error_cambio_comando+" año o al bloque o sino al quiz.");
+        bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz.");
 });
 
 // test por bloque
 bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
     logs.logBloque(msg);
-    const cid = msg.chat.id
-    var db = clientMongo.getDb();
-    let bloque = ''
-    let response = '';
+    let db = clientMongo.getDb();
     let comando = msg.text.toString();
-    const bloque_elegido = comando.substring(1, comando.length);
+    let bloque_elegido = comando.substring(1, comando.length);
     accion = comando;  
 
     if (accion_anterior == '' | accion == accion_anterior){
@@ -123,46 +117,42 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
                 || bloque_elegido.toLowerCase() == command[5].substring(1,command[5].length ) || bloque_elegido.toLowerCase() == command[6].substring(1,command[6].length ) ){ //b4
 
                 bloque_anterior = bloque_elegido;
-                bloque = bloque_elegido.toUpperCase();
+                let bloque = bloque_elegido.toUpperCase();
 
                 db.collection(coleccion_preguntas).find({ "bloque" : bloque }).toArray((err, results) => {
-                    if (err)
-                        log.error(err, { scope: 'find bloque'+coleccion_preguntas } );
+                    if (err) { log.error(err, { scope: 'find bloque'+coleccion_preguntas } ); }
                     
                     results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
                         let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
                         preguntasBloque.push(preg);
-
                     });
-                    //preguntasBloque = funciones.getPreguntasPorBloque(array, bloque);
+
                     if( !validaciones.arrayVacio(preguntasBloque, "preguntasBloque") ){
-            
                         preguntasBloque = funciones.shuffle(preguntasBloque);
                         let m_datos = funciones.getDatosPregunta(preguntasBloque);
-                        response = funciones.getResponse(m_datos);
+                        let response = funciones.getResponse(m_datos);
                         datos = funciones.getDatos(datos, m_datos);
                         preg = funciones.getDatosPreg(preg, m_datos);
-                        bot.sendMessage(cid, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
+                        bot.sendMessage(msg.chat.id, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
                     }
                     else
                         log.error(error_cargar_array+" bloque.", { scope: comando } )
                 });
             }
             else
-                bot.sendMessage(cid, error_no_bien_elegido+command[3]);
+                bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[3]);
         }
         else 
-            bot.sendMessage(cid, error_cambio_comando+" bloque.");
+            bot.sendMessage(msg.chat.id, error_cambio_comando+" bloque.");
     }    
     else 
-        bot.sendMessage(cid, error_cambio_comando+" año o al bloque o sino al quiz.");
+        bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz.");
 });
 
 // test por año
 bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
     logs.logYear(msg);
-    const cid = msg.chat.id
-    var db = clientMongo.getDb();
+    let db = clientMongo.getDb();
     let comando = msg.text.toString();
     let anio_elegido = comando.substring(1, comando.length);
     accion = comando;
@@ -181,8 +171,7 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
                 let autorPI1 = "TAI-PI-"+anio_elegido+"-1";
 
                 db.collection(coleccion_preguntas).find({$or:[{ "autor" : autorLI1 },{ "autor" : autorPI1 } ]}).toArray((err, results) => {
-                    if (err)
-                        log.error(err, { scope: 'find autor '+autorLI1+" "+autorPI1+" "+coleccion_preguntas } );
+                    if (err) { log.error(err, { scope: 'find autor '+autorLI1+" "+autorPI1+" "+coleccion_preguntas } ); }
                     
                     results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
                         let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
@@ -191,36 +180,34 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
                 });
 
                 if( !validaciones.arrayVacio(preguntasAnio, "preguntasAnio") ){
-            
                     preguntasAnio = funciones.shuffle(preguntasAnio);
                     let m_datos = funciones.getDatosPregunta(preguntasAnio);
-                    response = funciones.getResponse(m_datos);
+                    let response = funciones.getResponse(m_datos);
                     datos = funciones.getDatos(datos, m_datos);
                     preg = funciones.getDatosPreg(preg, m_datos);
-                    bot.sendMessage(cid, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
+                    bot.sendMessage(msg.chat.id, response, { parse_mode: markdown, reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
                 }
                 else
                     log.error(error_cargar_array+" año.", { scope: comando })
             }
             else
-                bot.sendMessage(cid, error_no_bien_elegido+command[8]);
+                bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[8]);
         }
         else
-            bot.sendMessage(cid, error_cambio_comando+" año.");
+            bot.sendMessage(msg.chat.id, error_cambio_comando+" año.");
     }
     else 
-        bot.sendMessage(cid, error_cambio_comando+" año o al bloque o sino al quiz.");
+        bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz.");
 });
 
 // Listener (handler) for callback data from /quiz or /b1 or /2015 command
 bot.on('callback_query', (callbackQuery) => {
     const msg = callbackQuery.message;
-    let response = "No has respondido a la pregunta";
     if( callbackQuery.data == '') 
-        bot.sendMessage(msg.chat.id, response); 
+        bot.sendMessage(msg.chat.id, "No has respondido a la pregunta"); 
     else if( callbackQuery.data != ''){
-        response = oper.callbackQuery(msg, callbackQuery.data, datos_score, datos, accion);
-        tipo_respuesta = funciones.tipoRespuesta(datos[1], callbackQuery.data);
+        let response = oper.callbackQuery(msg, callbackQuery.data, datos_score, datos, accion);
+        let tipo_respuesta = funciones.tipoRespuesta(datos[1], callbackQuery.data);
         let doc = oper.createCallbackObject(msg, callbackQuery.data, accion, preg, datos, tipo_respuesta);
         bot.sendMessage(msg.chat.id, response, { parse_mode: markdown }).then(() => { db_operations.insertRespUser(doc); });
     }
@@ -231,7 +218,7 @@ bot.onText(/^\/stop/, (msg) => {
     let response = oper.commandStop(msg, datos_score, accion);
     if( response.substring(0,2).trim() == "De" ){
         let doc = oper.createStopObject(msg);
-        bot.sendMessage(msg.chat.id, response, { parse_mode: markdown }).then(() => { contador = 0, datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = ''; db_operations.insertRespUser(doc); });
+        bot.sendMessage(msg.chat.id, response, { parse_mode: markdown }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = ''; db_operations.insertRespUser(doc); });
     }
     else
         bot.sendMessage(msg.chat.id, response);
@@ -248,6 +235,5 @@ bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
 
 // command default
 bot.on('message', (msg) =>  {
-    response = oper.commandDefault(msg);
-    bot.sendMessage(msg.chat.id, response);
+    bot.sendMessage(msg.chat.id, oper.commandDefault(msg));
 });
