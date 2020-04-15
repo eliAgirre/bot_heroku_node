@@ -58,8 +58,8 @@ var anio_anterior = '';
 
 // comandos
 bot.onText(/^\/start/, (msg) => {
-    let response = oper.commandStart(msg);
-    bot.sendMessage(msg.chat.id, response);  
+    datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '';
+    bot.sendMessage(msg.chat.id, oper.commandStart(msg));  
 });
 
 // help
