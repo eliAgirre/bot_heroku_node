@@ -63,6 +63,12 @@ module.exports = {
         return doc;
     },
 
+    commandTest: function(msg){
+        logs.logTest(msg);
+        let response = "Has elegido realizar un test personalizado. \n" 
+        return response;   
+    },
+
     commandStop: function(msg, datos_score, accion){
         logs.logStop(msg);
         let response = '';
@@ -130,9 +136,32 @@ module.exports = {
         comando = texto.substring(0, 6);
         comando = comando.trim().toLowerCase();
         search = texto.substring(5, texto.length);
+        
+        console.log("texto: "+texto);
+        console.log("comando: "+comando);
+        console.log("search: "+search);
 
-        if ( !funciones.findCommnad(comando) ) // si no es ningun comando
-            response = "No te entiendo \"" +texto+ "\"\nPuedes escribir el comando "+command[1]+" para saber qué comando utilizar."
+        if ( !funciones.findCommnad(comando) ){ // si no es ningun comando
+
+            if ( !funciones.findAutores(texto) ){ // si no es ningun autor
+                response = "No te entiendo \"" +texto+ "\"\nPuedes escribir el comando "+command[1]+" para saber qué comando utilizar."
+            }
+            else if ( funciones.findAutores(texto) ){ // si es algun autor
+
+                var inap = "INAP";
+                if (texto.includes(inap)) {
+                    bot.sendMessage(msg.chat.id, "¿Qué año quieres?"); // despues... promocion interna o libre. Si tengo la 1 y 2. preguntarlo, sino por defecto la 1.
+                }
+                var emilio = "Emilio";
+                if (texto.includes(emilio)) {
+                    bot.sendMessage(msg.chat.id, "¿Qué bloque quieres?");
+                }    
+                var adams = "Adams";
+                if (texto.includes(adams)) {
+                    bot.sendMessage(msg.chat.id, "¿Qué bloque quieres?");
+                }
+            }
+        }
         else{
 
             if ( funciones.findCommnad(comando) ){ // si es el comando wiki

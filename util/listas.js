@@ -16,11 +16,20 @@ module.exports = {
             '2016'        : 'Test 2016 INAP',
             '2017'        : 'Test 2017 INAP',
             '2018'        : 'Test 2018 INAP',
+            'test'        : 'Test personalizado',
             'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
             'wiki'        : 'Busca información en la wikipedia en castellano.'
         }
         
         return commands;
+    },
+
+    listAutores: function(){
+
+        const autores = ["INAP","Emilio","Adams"];
+
+        return autores;
+
     },
 
     getKeyboard: function(){
@@ -69,10 +78,24 @@ module.exports = {
                                 "/2017",    //10
                                 "/2018",    //11
                                 "/stop",    //12
-                                "/wiki"     //13
+                                "/wiki",    //13
+                                "/test"     //14
                             ];
 
         return array_commands;
+
+    },
+
+    getTestKeyboard1: function() {
+
+        let keyboard_1 = {
+                            "reply_markup": {
+                                //"keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
+                                "keyboard": [this.listAutores()]
+                            }
+                        };
+
+        return keyboard_1;
 
     }
 

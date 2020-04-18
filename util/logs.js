@@ -58,6 +58,13 @@ module.exports = {
         funciones.writeFile(file_log, log_info);
     },
 
+    logTest: function(msg){
+        console.log("Comando "+command[14])
+        const log_info = `El comando `+command[14]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+        log.info(log_info, { scope: command[14] });
+        funciones.writeFile(file_log, log_info);
+    },
+
     logStop: function(msg){
         console.log("Comando "+command[12])
         const log_info = `El comando `+command[12]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`

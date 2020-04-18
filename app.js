@@ -183,6 +183,14 @@ bot.on('callback_query', (callbackQuery) => {
     }
 });
 
+bot.onText(/\/test/, (msg) => {
+    let response = oper.commandTest(msg);
+    response += "¿Qué autor quieres elegir para hacer el test?";
+    console.log("response: "+response);
+    bot.sendMessage(msg.chat.id, response, listas.getTestKeyboard1());
+        
+});
+
 // stop
 bot.onText(/^\/stop/, (msg) => {
     let response = oper.commandStop(msg, datos_score, accion);

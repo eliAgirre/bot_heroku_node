@@ -2,6 +2,7 @@ const listas = require('./listas.js');
 const validaciones = require('./validaciones.js');
 const model_pregunta = require('../model/Pregunta.js');
 const commands = listas.listCommand();
+const autores = listas.listAutores();
 var knownUsers = [];
 var userStep = [];
 
@@ -48,6 +49,23 @@ module.exports = {
         return encontrado;
         
     },
+
+    findAutores: function(text) {
+
+      var encontrado = false;
+
+      if( !validaciones.arrayVacio(autores, "autores")){
+        for (i=0;i<autores.length;i++) {
+          //console.log(autores[i])
+          if( text == autores[i] ){
+              encontrado = true;
+          }
+        }          
+      }
+
+      return encontrado;
+      
+  },
 
     readFile: function(filename){
 
