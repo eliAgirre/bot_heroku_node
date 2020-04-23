@@ -35,181 +35,101 @@ const error_cambio_comando = "Para cambiar debes escribir el comando "+command[1
 // variables globales- ------ var array = funciones.readFile(file_preguntas); var preguntas = funciones.getPreguntas(array);
 var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [];
 var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '';
-
 // comaandos
 bot.onText(/^\/start/, (msg) => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = ''; bot.sendMessage(msg.chat.id, oper.commandStart(msg)); });
 // help
 bot.onText(/^\/help/, (msg) => { bot.sendMessage(msg.chat.id, oper.commandHelp(msg)); });
 // quiz
 bot.onText(/^\/quiz/, (msg) => {
-    logs.logQuiz(msg);
-    let db = clientMongo.getDb();
-    let db_questions = []
-    accion = command[2];
-
+    logs.logQuiz(msg); let db = clientMongo.getDb(), db_questions = []; accion = command[2];
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
-
-        db.collection(coleccion_preguntas).find().toArray((err, results) => {
+        db.collection(coleccion_preguntas).find().toArray((err, results) => { // consulta preguntas
             if (err) { log.error(err, { scope: 'find '+coleccion_preguntas } ); }
-
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
-                db_questions.push(preg);
+                db_questions.push(new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
             });
-    
-            db_questions = funciones.shuffle(db_questions);
-            let m_datos = funciones.getDatosPregunta(db_questions);
-            let response = funciones.getResponse(m_datos);
+            db_questions = funciones.shuffle(db_questions); // random preguntas
+            let m_datos = funciones.getDatosPregunta(db_questions), response = funciones.getResponse(m_datos);
             datos = funciones.getDatos(datos, m_datos);
             preg = funciones.getDatosPreg(preg, m_datos);
             bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
         });
-    }
-    else
-        bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz.");
+    } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz."); }
 });
-
 // test por bloque
 bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
     logs.logBloque(msg);
-    let db = clientMongo.getDb();
-    let comando = msg.text.toString();
-    let bloque_elegido = comando.substring(1, comando.length);
-    accion = comando;  
-
+    let db = clientMongo.getDb(), comando = msg.text.toString(), bloque_elegido = comando.substring(1, comando.length);
+    accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
-
         if (bloque_anterior == '' | bloque_elegido == bloque_anterior){
-
             if (bloque_elegido.toLowerCase() == command[3].substring(1,command[3].length )|| bloque_elegido.toLowerCase() == command[4].substring(1,command[4].length ) //b2
                 || bloque_elegido.toLowerCase() == command[5].substring(1,command[5].length ) || bloque_elegido.toLowerCase() == command[6].substring(1,command[6].length ) ){ //b4
-
                 bloque_anterior = bloque_elegido;
-                let bloque = bloque_elegido.toUpperCase();
-
-                db.collection(coleccion_preguntas).find({ "bloque" : bloque }).toArray((err, results) => {
+                db.collection(coleccion_preguntas).find({ "bloque" : bloque_elegido.toUpperCase() }).toArray((err, results) => { // consulta bloque
                     if (err) { log.error(err, { scope: 'find bloque'+coleccion_preguntas } ); }
-                    
                     results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                        let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
-                        preguntasBloque.push(preg);
+                        preguntasBloque.push(new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
                     });
-
                     if( !validaciones.arrayVacio(preguntasBloque, "preguntasBloque") ){
                         preguntasBloque = funciones.shuffle(preguntasBloque);
-                        let m_datos = funciones.getDatosPregunta(preguntasBloque);
-                        let response = funciones.getResponse(m_datos);
+                        let m_datos = funciones.getDatosPregunta(preguntasBloque), response = funciones.getResponse(m_datos);
                         datos = funciones.getDatos(datos, m_datos);
                         preg = funciones.getDatosPreg(preg, m_datos);
                         bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
-                    }
-                    else
-                        log.error(error_cargar_array+" bloque.", { scope: comando } )
+                    } else { log.error(error_cargar_array+" bloque.", { scope: comando } ) }
                 });
-            }
-            else
-                bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[3]);
-        }
-        else 
-            bot.sendMessage(msg.chat.id, error_cambio_comando+" bloque.");
-    }    
-    else 
-        bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz.");
+            } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[3]); }
+        } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" bloque."); }
+    } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz."); }
 });
-
 // test por año
 bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
     logs.logYear(msg);
-    let db = clientMongo.getDb();
-    let comando = msg.text.toString();
-    let anio_elegido = comando.substring(1, comando.length);
+    let db = clientMongo.getDb(), comando = msg.text.toString(), anio_elegido = comando.substring(1, comando.length);
     accion = comando;
-    
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
-
         if ( anio_anterior == '' | anio_elegido == anio_anterior){
-
             if ( anio_elegido == command[7].substring(1,command[7].length ) || anio_elegido == command[8].substring(1,command[8].length ) //2015
                 || anio_elegido == command[9].substring(1,command[9].length ) || anio_elegido == command[10].substring(1,command[10].length ) //2017
                 || anio_elegido == command[11].substring(1,command[11].length ) ){ //2018
-
                 anio_anterior = anio_elegido;
-                let autorLI1 = "TAI-LI-"+anio_elegido+"-1";
-                let autorPI1 = "TAI-PI-"+anio_elegido+"-1";
-
-                db.collection(coleccion_preguntas).find({$or:[{ "autor" : autorLI1 },{ "autor" : autorPI1 } ]}).toArray((err, results) => {
+                let autorLI1 = "TAI-LI-"+anio_elegido+"-1", autorPI1 = "TAI-PI-"+anio_elegido+"-1";
+                db.collection(coleccion_preguntas).find({$or:[{ "autor" : autorLI1 },{ "autor" : autorPI1 } ]}).toArray((err, results) => { // consulta autor
                     if (err) { log.error(err, { scope: 'find autor '+autorLI1+" "+autorPI1+" "+coleccion_preguntas } ); }
-                    
                     results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                        let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta);
-                        preguntasAnio.push(preg);
+                        preguntasAnio.push(new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
                     });
                 });
-
                 if( !validaciones.arrayVacio(preguntasAnio, "preguntasAnio") ){
                     preguntasAnio = funciones.shuffle(preguntasAnio);
-                    let m_datos = funciones.getDatosPregunta(preguntasAnio);
-                    let response = funciones.getResponse(m_datos);
+                    let m_datos = funciones.getDatosPregunta(preguntasAnio), response = funciones.getResponse(m_datos);
                     datos = funciones.getDatos(datos, m_datos);
                     preg = funciones.getDatosPreg(preg, m_datos);
                     bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
-                }
-                else
-                    log.error(error_cargar_array+" año.", { scope: comando })
-            }
-            else
-                bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[8]);
-        }
-        else
-            bot.sendMessage(msg.chat.id, error_cambio_comando+" año.");
-    }
-    else 
-        bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz.");
+                } else { log.error(error_cargar_array+" año.", { scope: comando }) }
+            } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[8]); }
+        } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" año."); }
+    } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz."); }
 });
-
 // Listener (handler) for callback data from /quiz or /b1 or /2015 command
 bot.on('callback_query', (callbackQuery) => {
-    const msg = callbackQuery.message;
-    if( callbackQuery.data == '') 
-        bot.sendMessage(msg.chat.id, "No has respondido a la pregunta"); 
-    else if( callbackQuery.data != ''){
-        let response = oper.callbackQuery(msg, callbackQuery.data, datos_score, datos, accion);
-        let tipo_respuesta = funciones.tipoRespuesta(datos[1], callbackQuery.data);
-        let doc = oper.createCallbackObject(msg, callbackQuery.data, accion, preg, datos, tipo_respuesta);
-        bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown" }).then(() => { db_operations.insertRespUser(doc); });
-    }
+    if( callbackQuery.data == '') { bot.sendMessage(callbackQuery.message.chat.id, "No has respondido a la pregunta"); }
+    else if( callbackQuery.data != '') { bot.sendMessage(callbackQuery.message.chat.id, oper.callbackQuery(callbackQuery.message, callbackQuery.data, datos_score, datos, accion), { parse_mode: "Markdown" }).then(() => { db_operations.insertRespUser(oper.createCallbackObject(callbackQuery.message, callbackQuery.data, accion, preg, datos, funciones.tipoRespuesta(datos[1], callbackQuery.data)) ); }); }
 });
-
-bot.onText(/\/test/, (msg) => {
-    let response = oper.commandTest(msg);
-    response += "¿Qué autor quieres elegir para hacer el test?";
-    console.log("response: "+response);
-    bot.sendMessage(msg.chat.id, response, listas.getTestKeyboard1());
-        
-});
-
+// test
+bot.onText(/\/test/, (msg) => { bot.sendMessage(msg.chat.id,  oper.commandTest(msg)+"¿Qué autor quieres elegir para hacer el test?", listas.getTestKeyboard1()); });
 // stop
 bot.onText(/^\/stop/, (msg) => {
-    let response = oper.commandStop(msg, datos_score, accion);
-    if( response.substring(0,2).trim() == "De" ){
-        let doc = oper.createStopObject(msg);
-        bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = ''; db_operations.insertRespUser(doc); });
-    }
-    else
-        bot.sendMessage(msg.chat.id, response);
+    if( oper.commandStop(msg, datos_score, accion).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion), { parse_mode: "Markdown" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = ''; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
+    else { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion)); }
 });
-
 // wiki [whatever]
 bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
-    let response = oper.commandWiki(msg, match[1]);
-    if( response.length > 0 ){
-        let doc = oper.createSearchObject(msg, response);
-        bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML" }).then(() => { db_operations.insertSearchUser(doc); });
-    }
+    if( oper.commandWiki(msg, match[1]).length > 0 ) { bot.sendMessage(msg.chat.id, oper.commandWiki(msg, match[1]), { parse_mode: "HTML" }).then(() => { db_operations.insertSearchUser( oper.createSearchObject(msg, response) ); }); }
 });
-
 // default
 bot.on('message', (msg) =>  { bot.sendMessage(msg.chat.id, oper.commandDefault(msg)); });
