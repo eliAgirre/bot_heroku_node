@@ -3,6 +3,9 @@ const validaciones = require('./validaciones.js');
 const model_pregunta = require('../model/Pregunta.js');
 const commands = listas.listCommand();
 const autores = listas.listAutores();
+const bloques = listas.listBloques();
+const years = listas.listYears();
+const promociones = listas.listPromociones();
 var knownUsers = [];
 var userStep = [];
 
@@ -65,7 +68,96 @@ module.exports = {
 
       return encontrado;
       
-  },
+    },
+
+    findBloques: function(text) {
+
+      var encontrado = false;
+
+      if( !validaciones.arrayVacio(bloques, "bloques")){
+        for (i=0;i<bloques.length;i++) {
+          //console.log(bloques[i])
+          if( text == bloques[i] ){
+              encontrado = true;
+          }
+        }          
+      }
+
+      return encontrado;
+      
+    },
+
+    findYears: function(text) {
+
+      var encontrado = false;
+
+      if( !validaciones.arrayVacio(years, "years")){
+        for (i=0;i<years.length;i++) {
+          //console.log(years[i])
+          if( text == years[i] ){
+              encontrado = true;
+          }
+        }          
+      }
+
+      return encontrado;
+      
+    },
+
+    findPromociones: function(text) {
+
+      var encontrado = false;
+
+      if( !validaciones.arrayVacio(promociones, "promociones")){
+        for (i=0;i<promociones.length;i++) {
+          //console.log(promociones[i])
+          if( text == promociones[i] ){
+              encontrado = true;
+          }
+        }          
+      }
+
+      return encontrado;
+      
+    },
+
+    findEnArray: function(text, array, nombreArray) {
+
+      var encontrado = false;
+
+      if( !validaciones.arrayVacio(array, nombreArray)){
+        for (i=0;i<array.length;i++) {
+          //console.log(array[i])
+          if( text == array[i] ){
+              encontrado = true;
+          }
+        }          
+      }
+
+      return encontrado;
+      
+    },
+
+    textIncluyeArray: function(text, array, nombreArray){
+
+      //var incluye = false;
+      var texto = '';
+
+      if( !validaciones.arrayVacio(array, nombreArray)){
+
+        for (i=0;i<array.length;i++) {
+          //console.log(array[i])
+          if( text.includes(array[i]) ){
+            //incluye = true;
+            texto = array[i];
+          }
+          
+        }
+      }
+
+      //return incluye;
+      return texto;
+    },
 
     readFile: function(filename){
 

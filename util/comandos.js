@@ -7,6 +7,7 @@ const funciones = require('./funciones.js');
 const listas = require('./listas.js');
 const commands = listas.listCommand();
 const command = listas.arrayCommands();
+const commandHelp = listas.listCommandHelp();
 
 module.exports = {
 
@@ -25,8 +26,8 @@ module.exports = {
     commandHelp: function(msg){
         logs.logHelp(msg);
         let response = "Los siguientes comando están disponibles para este bot: \n" 
-        for (key in commands)  // generate help text out of the commands dictionary defined at the top 
-            response += "/"+key +' : '+commands[key]+"\n"
+        for (key in commandHelp)  // generate help text out of the commands dictionary defined at the top 
+            response += "/"+key +' : '+commandHelp[key]+"\n"
         return response;   
     },
 
@@ -69,7 +70,13 @@ module.exports = {
         return response;   
     },
 
-    commandStop: function(msg, datos_score, accion){
+    commandTestInap: function(msg){
+        logs.logTest(msg);
+        let response = "Has elegido realizar un test personalizado. \n" 
+        return response;   
+    },
+
+    commandStop: function(msg, datos_score, accion, search_autor){
         logs.logStop(msg);
         let response = '';
         let contador = 0;
@@ -85,11 +92,14 @@ module.exports = {
                 let anio = accion.substring(1,accion.length);
                 response = "De las *"+contador.toString()+"* preguntas del *año "+anio+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
             }
+            else if ( accion == command[15] ){ //test personalizados
+                response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
+            }
             else
                 response = "De las *"+contador.toString()+"* preguntas.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
         }
         else{
-            accion = command[2]+" o "+command[3]+" o "+command[4]+" o "+command[5]+" o "+command[6]+" o "+command[8]+" o "+command[9]+" o "+command[10];
+            accion = command[2]+" o "+command[3]+" o "+command[4]+" o "+command[5]+" o "+command[6]+" o "+command[8]+" o "+command[9]+" o "+command[10]+" o "+command[14];
             response = "No hay puntuación, ya que no has respondido al test o ya habías terminado.\nPara empezar hacer el test puedes escribir el comando "+accion+" y después hacer clic en alguna de las opciones correspondientes."
         }
 
@@ -133,40 +143,28 @@ module.exports = {
         logs.logDefault(msg);
         let response = '';
         texto = msg.text.toString();
-        comando = texto.substring(0, 6);
-        comando = comando.trim().toLowerCase();
+        comando = texto;
+        comando = comando.trim();
+        comando_wiki = texto.substring(0, 6);
+        comando_wiki = comando_wiki.trim().toLowerCase();
         search = texto.substring(5, texto.length);
         
         console.log("texto: "+texto);
         console.log("comando: "+comando);
+        console.log("comando wiki: "+comando_wiki);
         console.log("search: "+search);
 
         if ( !funciones.findCommnad(comando) ){ // si no es ningun comando
 
-            if ( !funciones.findAutores(texto) ){ // si no es ningun autor
+            if ( !funciones.findAutores(texto) & !funciones.findBloques(texto) & !funciones.findYears(texto) & !funciones.findPromociones(texto) ){ // si no es ningun autor o bloque o promocion
                 response = "No te entiendo \"" +texto+ "\"\nPuedes escribir el comando "+command[1]+" para saber qué comando utilizar."
-            }
-            else if ( funciones.findAutores(texto) ){ // si es algun autor
-
-                var inap = "INAP";
-                if (texto.includes(inap)) {
-                    bot.sendMessage(msg.chat.id, "¿Qué año quieres?"); // despues... promocion interna o libre. Si tengo la 1 y 2. preguntarlo, sino por defecto la 1.
-                }
-                var emilio = "Emilio";
-                if (texto.includes(emilio)) {
-                    bot.sendMessage(msg.chat.id, "¿Qué bloque quieres?");
-                }    
-                var adams = "Adams";
-                if (texto.includes(adams)) {
-                    bot.sendMessage(msg.chat.id, "¿Qué bloque quieres?");
-                }
             }
         }
         else{
 
-            if ( funciones.findCommnad(comando) ){ // si es el comando wiki
+            if ( funciones.findCommnad(comando_wiki) ){ // si es el comando wiki
     
-                if( comando === command[13] ){
+                if( comando_wiki === command[13] ){
                     if (search.length === 0)
                         response = "No has puesto nada después de "+command[13]+" para buscarlo."
                 }

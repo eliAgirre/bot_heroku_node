@@ -1,7 +1,7 @@
 // listas
 module.exports = {
 
-    listCommand: function() {
+    listCommandHelp: function() {
 
         commands = {  // command description used in the "help" command 
             'start'       : 'Bienvenido al chatbot', 
@@ -24,12 +24,57 @@ module.exports = {
         return commands;
     },
 
+    listCommand: function() {
+
+        commands = {
+            'start'       : 'Bienvenido al chatbot', 
+            'help'        : 'Esta instrucción informa sobre los comandos de este bot',
+            'quiz'        : 'Empezar el test',
+            'b1'          : 'Test bloque 1 - Legislacion.',
+            'b2'          : 'Test bloque 2 - Tecnología básica.',
+            'b3'          : 'Test bloque 3 - Programación.',
+            'b4'          : 'Test bloque 4 - Sistemas.',
+            '2014'        : 'Test 2014 INAP',
+            '2015'        : 'Test 2015 INAP',
+            '2016'        : 'Test 2016 INAP',
+            '2017'        : 'Test 2017 INAP',
+            '2018'        : 'Test 2018 INAP',
+            'test'        : 'Test personalizado',
+            'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
+            'wiki'        : 'Busca información en la wikipedia en castellano.',
+            'inap'        : 'Test del INAP personalido.'
+        }
+        
+        return commands;
+    },
+
     listAutores: function(){
 
         const autores = ["INAP","Emilio","Adams"];
 
         return autores;
 
+    },
+
+    listBloques: function(){
+
+        const bloques = ["B1","B2","B3","B4"];
+
+        return bloques;
+    },
+
+    listYears: function(){
+
+        const years = ["2014","2015","2016","2017","2018"];
+
+        return years;
+    },
+
+    listPromociones: function(){
+
+        const years = ["PI","LI"];
+
+        return years;
     },
 
     getKeyboard: function(){
@@ -79,24 +124,55 @@ module.exports = {
                                 "/2018",    //11
                                 "/stop",    //12
                                 "/wiki",    //13
-                                "/test"     //14
+                                "/test",    //14
+                                "/inap"     //15
                             ];
 
         return array_commands;
 
     },
 
-    getTestKeyboard1: function() {
+    getTestKeyboardAutores: function() {
 
-        let keyboard_1 = {
+        let keyboard_autores = {
                             "reply_markup": {
                                 //"keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
-                                "keyboard": [this.listAutores()]
+                                "keyboard": [this.listAutores()], 
+                                "one_time_keyboard": true
+                                //"remove_keyboard": true
                             }
                         };
 
-        return keyboard_1;
+        return keyboard_autores;
+
+    },
+
+    getTestKeyboardBloques: function(){
+
+        let keyboard_bloques = { "reply_markup": { "keyboard": [this.listBloques()], "one_time_keyboard": true } };
+
+        return keyboard_bloques;
+    },
+
+    getTestKeyboardYears: function(){
+
+        let keyboard_years = { "reply_markup": { "keyboard": [this.listYears()], "one_time_keyboard": true } };
+
+        return keyboard_years;
+    },
+
+    getTestKeyboardPromocion: function(){
+
+        let keyboard_promocion = { "reply_markup": { "keyboard": [this.listPromociones()], "one_time_keyboard": true } };
+
+        return keyboard_promocion;
+    },
+
+    getTestKeyboardBlank: function(){
+
+        let keyboard_blank = { "reply_markup": { "keyboard": [], "one_time_keyboard": true } };
+
+        return keyboard_blank;
 
     }
-
 }
