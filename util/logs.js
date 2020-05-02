@@ -72,6 +72,20 @@ module.exports = {
         funciones.writeFile(file_log, log_info);
     },
 
+    logTestEmilio: function(msg){
+        console.log("Comando "+command[16])
+        const log_info = `El comando `+command[16]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+        log.info(log_info, { scope: command[16] });
+        funciones.writeFile(file_log, log_info);
+    },
+
+    logTestAdams: function(msg){
+        console.log("Comando "+command[17])
+        const log_info = `El comando `+command[17]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+        log.info(log_info, { scope: command[17] });
+        funciones.writeFile(file_log, log_info);
+    },
+
     logStop: function(msg){
         console.log("Comando "+command[12])
         const log_info = `El comando `+command[12]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`

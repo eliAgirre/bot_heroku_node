@@ -16,7 +16,7 @@ module.exports = {
             '2016'        : 'Test 2016 INAP',
             '2017'        : 'Test 2017 INAP',
             '2018'        : 'Test 2018 INAP',
-            'test'        : 'Test personalizado',
+            'test'        : 'Test personalizado.',
             'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
             'wiki'        : 'Busca información en la wikipedia en castellano.'
         }
@@ -39,7 +39,7 @@ module.exports = {
             '2016'        : 'Test 2016 INAP',
             '2017'        : 'Test 2017 INAP',
             '2018'        : 'Test 2018 INAP',
-            'test'        : 'Test personalizado',
+            'test'        : 'Test personalizado.',
             'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
             'wiki'        : 'Busca información en la wikipedia en castellano.',
             'inap'        : 'Test del INAP personalido.'
@@ -125,7 +125,9 @@ module.exports = {
                                 "/stop",    //12
                                 "/wiki",    //13
                                 "/test",    //14
-                                "/inap"     //15
+                                "/inap",    //15
+                                "/emilio",  //16
+                                "/adams"    //17
                             ];
 
         return array_commands;
@@ -170,7 +172,17 @@ module.exports = {
 
     getTestKeyboardBlank: function(){
 
-        let keyboard_blank = { "reply_markup": { "keyboard": [], "one_time_keyboard": true } };
+        //let keyboard_blank = { "reply_markup": { "keyboard": [], "one_time_keyboard": true } };
+
+        let keyboard_blank = { "reply_markup": { "remove_keyboard": true } };
+
+        return keyboard_blank;
+
+    },
+
+    getTestKeyboardBlank2: function(){
+
+        let keyboard_blank = { "keyboard": [], "one_time_keyboard": true };
 
         return keyboard_blank;
 

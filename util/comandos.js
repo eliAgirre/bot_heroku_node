@@ -92,7 +92,7 @@ module.exports = {
                 let anio = accion.substring(1,accion.length);
                 response = "De las *"+contador.toString()+"* preguntas del *año "+anio+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
             }
-            else if ( accion == command[15] ){ //test personalizados
+            else if ( accion == command[15] | accion == command[16] | accion == command[17] ){ //test personalizados
                 response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
             }
             else
@@ -154,7 +154,7 @@ module.exports = {
         console.log("comando wiki: "+comando_wiki);
         console.log("search: "+search);
 
-        if ( !funciones.findCommnad(comando) ){ // si no es ningun comando
+        if ( !funciones.findCommnad(comando) & !funciones.findCommnad(comando_wiki) & comando === 'https:' ){ // si no es ningun comando
 
             if ( !funciones.findAutores(texto) & !funciones.findBloques(texto) & !funciones.findYears(texto) & !funciones.findPromociones(texto) ){ // si no es ningun autor o bloque o promocion
                 response = "No te entiendo \"" +texto+ "\"\nPuedes escribir el comando "+command[1]+" para saber qué comando utilizar."
