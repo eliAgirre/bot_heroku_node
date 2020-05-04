@@ -27,14 +27,13 @@ const db_operations = require('./util/db_operations.js'); // operaciones db
 const oper = require('./util/comandos.js'); // constantes operaciones
 const listas = require('./util/listas.js'); // constantes listas/arrays
 const keyboard = listas.getKeyboard();
-const keyboard_blank = listas.getTestKeyboardBlank2();
 const command = listas.arrayCommands();
 // constantes errores ------
 const error_cargar_array = "Error al cargar el array de preguntas por";
 const error_no_bien_elegido = "No se ha elegido bien.\nPara ello debe escribir el comando.\nEjemplo: ";
 const error_cambio_comando = "Para cambiar debes escribir el comando "+command[12]+" y después el comando correspondiente al";
 // variables globales- ------ var array = funciones.readFile(file_preguntas); var preguntas = funciones.getPreguntas(array);
-var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [], selected = [], answerCallbacks = [];
+var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [], selected = [];
 var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '', search_autor = '', bloque_search = '';
 // comaandos
 bot.onText(/^\/start/, (msg) => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = ''; bot.sendMessage(msg.chat.id, oper.commandStart(msg)); });
@@ -125,10 +124,10 @@ bot.on('callback_query', (callbackQuery) => {
 bot.onText(/^\/test/, function(msg) { 
     let cid = msg.chat.id;
     let textoAutor = '', textoYear = '', textoPromo = '', textoBloque = '';
-    let i=0, i1=0, i2=0, ea=0, ea1=0;
+    let i=0, i1=0, i2=0, ea=0, ea1=0, g=0;
     bot.sendMessage(cid,  oper.commandTest(msg)+"¿Qué autor quieres elegir para hacer el test?", listas.getTestKeyboardAutores());
     //bot.onText(/.+/g, function(msg, match) {
-    bot.onText(/INAP|Emilio|Adams/, (msg) => {
+    bot.onText(/INAP|Emilio|Adams|Gokoan/, (msg) => {
         textoAutor = msg.text;
         if( funciones.findAutores(textoAutor) ){
             let autor = listas.listAutores();
@@ -195,6 +194,14 @@ bot.onText(/^\/test/, function(msg) {
                     });
                 }
             } // Emilio o Adams
+            else if( autorElegido === autor[3] ){ // Gokoan
+                if( g < 1 ){
+                    response += selected[0];
+                    bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
+                    bot.sendMessage(msg.chat.id, "\nPulsa "+command[18], listas.getTestKeyboardBlank() );
+                    g++;
+                }
+            } // Gokoan
             else{
                 if ( !funciones.findAutores(textoAutor) & !funciones.findBloques(textoBloque) & !funciones.findYears(textoYear) & !funciones.findPromociones(textoPromo) ) // si no es ningun autor o bloque o promocion
                     bot.sendMessage(msg.chat.id, "No has seleccionado bien del teclado.");
@@ -277,6 +284,35 @@ bot.onText(/^\/adams/, (msg) => {
             selected = [];
         }
         db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : "Adams" } ]}).toArray((err, results) => { // consulta autor
+            if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
+            results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
+                let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
+                questPersonalized.push(preg);
+                
+            });
+            if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
+                questPersonalized = funciones.shuffle(questPersonalized);
+                let m_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(m_datos);
+                datos = funciones.getDatos(datos, m_datos);
+                preg = funciones.getDatosPreg(preg, m_datos);
+                bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
+            } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
+        });
+    } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
+});
+// test gokoan
+bot.onText(/^\/gokoan/, (msg) => {
+    logs.logTestGokoan(msg);
+    let db = clientMongo.getDb(), comando = msg.text.toString();
+    let questPersonalized = [];
+    accion = comando;
+    if (accion_anterior == '' | accion == accion_anterior){
+        accion_anterior = accion;
+        if( search_autor === '' ){
+            search_autor = selected[0];
+            selected = [];
+        }
+        db.collection(coleccion_preguntas).find({ "autor" : search_autor }).toArray((err, results) => { // consulta autor
             if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
                 let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()

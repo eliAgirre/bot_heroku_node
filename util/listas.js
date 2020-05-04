@@ -42,7 +42,10 @@ module.exports = {
             'test'        : 'Test personalizado.',
             'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
             'wiki'        : 'Busca información en la wikipedia en castellano.',
-            'inap'        : 'Test del INAP personalido.'
+            'inap'        : 'Test del INAP personalido.',
+            'emilio'      : 'Test del Emilio personalido.',
+            'adams'       : 'Test del Adams personalido.',
+            'gokoan'      : 'Test del Gokoan personalido.'
         }
         
         return commands;
@@ -50,7 +53,7 @@ module.exports = {
 
     listAutores: function(){
 
-        const autores = ["INAP","Emilio","Adams"];
+        const autores = ["INAP","Emilio","Adams","Gokoan"];
 
         return autores;
 
@@ -127,7 +130,8 @@ module.exports = {
                                 "/test",    //14
                                 "/inap",    //15
                                 "/emilio",  //16
-                                "/adams"    //17
+                                "/adams",   //17
+                                "/gokoan"   //18
                             ];
 
         return array_commands;

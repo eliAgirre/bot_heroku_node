@@ -92,7 +92,7 @@ module.exports = {
                 let anio = accion.substring(1,accion.length);
                 response = "De las *"+contador.toString()+"* preguntas del *año "+anio+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
             }
-            else if ( accion == command[15] | accion == command[16] | accion == command[17] ){ //test personalizados
+            else if ( accion == command[15] | accion == command[16] | accion == command[17] | accion == command[18] ){ //test personalizados
                 response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
             }
             else
