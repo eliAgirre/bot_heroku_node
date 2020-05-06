@@ -92,7 +92,7 @@ module.exports = {
                 let anio = accion.substring(1,accion.length);
                 response = "De las *"+contador.toString()+"* preguntas del *año "+anio+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
             }
-            else if ( accion == command[15] | accion == command[16] | accion == command[17] | accion == command[18] ){ //test personalizados
+            else if ( accion == command[15] | accion == command[16] | accion == command[17] | accion == command[18] | accion == command[19] ){ //test personalizados
                 response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
             }
             else
@@ -168,7 +168,12 @@ module.exports = {
                     if (search.length === 0)
                         response = "No has puesto nada después de "+command[13]+" para buscarlo."
                 }
+                
             }
+            /*
+            else{
+                response = "No existe el comando en este bot. Para ello puedes escribir /help.";
+            }*/
         }
 
         return response;

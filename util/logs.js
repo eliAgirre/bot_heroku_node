@@ -93,6 +93,13 @@ module.exports = {
         funciones.writeFile(file_log, log_info);
     },
 
+    logTestOposapiens: function(msg){
+        console.log("Comando "+command[19])
+        const log_info = `El comando `+command[19]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+        log.info(log_info, { scope: command[19] });
+        funciones.writeFile(file_log, log_info);
+    },
+
     logStop: function(msg){
         console.log("Comando "+command[12])
         const log_info = `El comando `+command[12]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
@@ -104,6 +111,13 @@ module.exports = {
         console.log("Comando "+command[13])
         const log_info = `El comando `+command[13]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
         log.info(log_info, { scope: command[13] });
+        funciones.writeFile(file_log, log_info);
+    },
+
+    logSearches: function(msg){
+        console.log("Comando "+command[20])
+        const log_info = `El comando `+command[20]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+        log.info(log_info, { scope: command[20] });
         funciones.writeFile(file_log, log_info);
     },
 

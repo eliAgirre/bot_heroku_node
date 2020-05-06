@@ -45,7 +45,9 @@ module.exports = {
             'inap'        : 'Test del INAP personalido.',
             'emilio'      : 'Test del Emilio personalido.',
             'adams'       : 'Test del Adams personalido.',
-            'gokoan'      : 'Test del Gokoan personalido.'
+            'gokoan'      : 'Test del Gokoan personalido.',
+            'oposapiens'  : 'Test del Oposapiens personalido.',
+            'searches'    : 'Busquedas wiki.'
         }
         
         return commands;
@@ -53,7 +55,12 @@ module.exports = {
 
     listAutores: function(){
 
-        const autores = ["INAP","Emilio","Adams","Gokoan"];
+        const autores = ["INAP",    //0
+                        "Emilio",   //1
+                        "Adams",    //2
+                        "Gokoan",   //3
+                        "OpoSapiens" //4
+                        ];
 
         return autores;
 
@@ -131,7 +138,9 @@ module.exports = {
                                 "/inap",    //15
                                 "/emilio",  //16
                                 "/adams",   //17
-                                "/gokoan"   //18
+                                "/gokoan",   //18
+                                "/oposapiens", //19
+                                "/searches"  //20
                             ];
 
         return array_commands;

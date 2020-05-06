@@ -34,7 +34,7 @@ const error_no_bien_elegido = "No se ha elegido bien.\nPara ello debe escribir e
 const error_cambio_comando = "Para cambiar debes escribir el comando "+command[12]+" y después el comando correspondiente al";
 // variables globales- ------ var array = funciones.readFile(file_preguntas); var preguntas = funciones.getPreguntas(array);
 var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [], selected = [];
-var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '', search_autor = '', bloque_search = '';
+var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '', search_autor = '', bloque_search = '', autor = '';
 // comaandos
 bot.onText(/^\/start/, (msg) => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = ''; bot.sendMessage(msg.chat.id, oper.commandStart(msg)); });
 // help
@@ -127,7 +127,7 @@ bot.onText(/^\/test/, function(msg) {
     let i=0, i1=0, i2=0, ea=0, ea1=0, g=0;
     bot.sendMessage(cid,  oper.commandTest(msg)+"¿Qué autor quieres elegir para hacer el test?", listas.getTestKeyboardAutores());
     //bot.onText(/.+/g, function(msg, match) {
-    bot.onText(/INAP|Emilio|Adams|Gokoan/, (msg) => {
+    bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens/, (msg) => {
         textoAutor = msg.text;
         if( funciones.findAutores(textoAutor) ){
             let autor = listas.listAutores();
@@ -194,14 +194,16 @@ bot.onText(/^\/test/, function(msg) {
                     });
                 }
             } // Emilio o Adams
-            else if( autorElegido === autor[3] ){ // Gokoan
+            else if( autorElegido === autor[3] | autorElegido === autor[4] ){ // Gokoan u Oposapiens
                 if( g < 1 ){
                     response += selected[0];
+                    if( autorElegido === autor[3]) com = command[18];
+                    else com = command[19];
                     bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
-                    bot.sendMessage(msg.chat.id, "\nPulsa "+command[18], listas.getTestKeyboardBlank() );
+                    bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() );
                     g++;
                 }
-            } // Gokoan
+            } // Gokoan u Oposapiens
             else{
                 if ( !funciones.findAutores(textoAutor) & !funciones.findBloques(textoBloque) & !funciones.findYears(textoYear) & !funciones.findPromociones(textoPromo) ) // si no es ningun autor o bloque o promocion
                     bot.sendMessage(msg.chat.id, "No has seleccionado bien del teclado.");
@@ -239,21 +241,22 @@ bot.onText(/^\/inap/, (msg) => {
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
 });
-// test emilio
-bot.onText(/^\/emilio/, (msg) => {
-    logs.logTestEmilio(msg);
+// test emilio o adams
+bot.onText(/^\/emilio|^\/adams/, (msg) => {
     let db = clientMongo.getDb(), comando = msg.text.toString();
     let questPersonalized = [];
+    if( comando == command[16] ){ logs.logTestEmilio(msg); }
+    else if( comando == command[17] ){ logs.logTestAdams(msg); }
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
-        accion_anterior = accion;
-        for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); }
+        accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); }
         if( search_autor === '' ){
-            search_autor = "Emilio del bloque "+selected[1];
+            if( comando == command[16] ){ search_autor = "Emilio del bloque "+selected[1]; autor = "Emilio"; }
+            else if( comando == command[17] ){ search_autor = "Adams del bloque "+selected[1]; autor = "Adams"; }
             bloque_search = selected[1];
             selected = [];
         }
-        db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : "Emilio" } ]}).toArray((err, results) => { // consulta autor
+        db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor } ]}).toArray((err, results) => { // consulta autor
             if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
                 let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
@@ -269,42 +272,12 @@ bot.onText(/^\/emilio/, (msg) => {
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
 });
-// test adams
-bot.onText(/^\/adams/, (msg) => {
-    logs.logTestAdams(msg);
+// test gokoan u oposapiens
+bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
     let db = clientMongo.getDb(), comando = msg.text.toString();
     let questPersonalized = [];
-    accion = comando;
-    if (accion_anterior == '' | accion == accion_anterior){
-        accion_anterior = accion;
-        for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); }
-        if( search_autor === '' ){
-            search_autor = "Adams del bloque "+selected[1];
-            bloque_search = selected[1];
-            selected = [];
-        }
-        db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : "Adams" } ]}).toArray((err, results) => { // consulta autor
-            if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
-            results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
-                questPersonalized.push(preg);
-                
-            });
-            if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
-                questPersonalized = funciones.shuffle(questPersonalized);
-                let m_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(m_datos);
-                datos = funciones.getDatos(datos, m_datos);
-                preg = funciones.getDatosPreg(preg, m_datos);
-                bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
-            } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
-        });
-    } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
-});
-// test gokoan
-bot.onText(/^\/gokoan/, (msg) => {
-    logs.logTestGokoan(msg);
-    let db = clientMongo.getDb(), comando = msg.text.toString();
-    let questPersonalized = [];
+    if( comando == command[18] ){ logs.logTestGokoan(msg); }
+    else if( comando == command[19] ){ logs.logTestOposapiens(msg); }
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
@@ -337,6 +310,19 @@ bot.onText(/^\/stop/, (msg) => {
 // wiki [whatever]
 bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
     if( oper.commandWiki(msg, match[1]).length > 0 ) { bot.sendMessage(msg.chat.id, oper.commandWiki(msg, match[1]), { parse_mode: "HTML" }).then(() => { db_operations.insertSearchUser( oper.createSearchObject(msg, response) ); }); }
+});
+bot.onText(/^\/searches/, (msg) => {
+    //var fs = require('fs');
+    logs.logSearches(msg);
+    var data = 'prueba'; 
+    const fileOptions = {
+        // Explicitly specify the file name.
+        filename: 'prueba.pdf',
+        // Explicitly specify the MIME type.
+        contentType: 'application/pdf',
+      };
+    bot.sendDocument(msg.chat.id, data, {}, fileOptions);
+    bot.sendMessage(msg.chat.id, data);
 });
 // default
 bot.on('message', (msg) =>  { bot.sendMessage(msg.chat.id, oper.commandDefault(msg)); });
