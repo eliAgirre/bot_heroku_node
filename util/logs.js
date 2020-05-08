@@ -100,6 +100,27 @@ module.exports = {
         funciones.writeFile(file_log, log_info);
     },
 
+    logTestOpositaTest: function(msg){
+        console.log("Comando "+command[21])
+        const log_info = `El comando `+command[21]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+        log.info(log_info, { scope: command[21] });
+        funciones.writeFile(file_log, log_info);
+    },
+
+    logTestDaypo: function(msg){
+        console.log("Comando "+command[22])
+        const log_info = `El comando `+command[22]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+        log.info(log_info, { scope: command[22] });
+        funciones.writeFile(file_log, log_info);
+    },
+
+    logTestPreparaTic: function(msg){
+        console.log("Comando "+command[23])
+        const log_info = `El comando `+command[23]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+        log.info(log_info, { scope: command[23] });
+        funciones.writeFile(file_log, log_info);
+    },
+
     logStop: function(msg){
         console.log("Comando "+command[12])
         const log_info = `El comando `+command[12]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`

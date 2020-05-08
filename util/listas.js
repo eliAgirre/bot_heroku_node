@@ -1,3 +1,6 @@
+// constantes funciones
+const funciones = require('./funciones.js');
+
 // listas
 module.exports = {
 
@@ -47,7 +50,10 @@ module.exports = {
             'adams'       : 'Test del Adams personalido.',
             'gokoan'      : 'Test del Gokoan personalido.',
             'oposapiens'  : 'Test del Oposapiens personalido.',
-            'searches'    : 'Busquedas wiki.'
+            'searches'    : 'Busquedas wiki.',
+            'opositatest' : 'Test del OpositaTest personalido.',
+            'daypo'       : 'Test del Daypo personalido.',
+            'preparatic'  : 'Test del Daypo personalido.'
         }
         
         return commands;
@@ -55,11 +61,14 @@ module.exports = {
 
     listAutores: function(){
 
-        const autores = ["INAP",    //0
-                        "Emilio",   //1
-                        "Adams",    //2
-                        "Gokoan",   //3
-                        "OpoSapiens" //4
+        const autores = ["INAP",        //0
+                        "Emilio",       //1
+                        "Adams",        //2
+                        "Gokoan",       //3
+                        "OpoSapiens",   //4
+                        "OpositaTest",  //5
+                        "Daypo",        //6
+                        "PreparaTic"    //7
                         ];
 
         return autores;
@@ -139,8 +148,11 @@ module.exports = {
                                 "/emilio",  //16
                                 "/adams",   //17
                                 "/gokoan",   //18
-                                "/oposapiens", //19
-                                "/searches"  //20
+                                "/oposapiens",//19
+                                "/searches",  //20
+                                "/opositatest",//21
+                                "/daypo",      //22
+                                "/preparatic"  //23
                             ];
 
         return array_commands;
@@ -148,16 +160,34 @@ module.exports = {
     },
 
     getTestKeyboardAutores: function() {
+        
+        filas = 3;
+        columnas = 3
+        autores = this.listAutores();
+        numAutores = autores.length; //autorXfila = Math.trunc(numAutores/filas);
+        autorFila0 = [];
+        autorFila1 = [];
+        autorFila2 = [];
+
+        for(var i=0;i<columnas;i++){ //console.log("autor: "+autores[i]);
+            autorFila0.push(autores[i]);
+        }
+        for(var i=columnas;i<(columnas*2);i++){ //console.log("autor: "+autores[i]);
+            autorFila1.push(autores[i]);
+        }
+        //for(var i=columnas*2;i<(columnas*3);i++){
+        for(var i=columnas*2;i<numAutores;i++){
+            autorFila2.push(autores[i]);
+        }
+        keyboard = [ autorFila0, autorFila1, autorFila2 ];
 
         let keyboard_autores = {
-                            "reply_markup": {
-                                //"keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
-                                "keyboard": [this.listAutores()], 
-                                "one_time_keyboard": true
-                                //"remove_keyboard": true
-                            }
-                        };
-
+                                "reply_markup": {
+                                                //"keyboard": [this.listAutores()],
+                                                "keyboard": [ keyboard[0], keyboard[1], keyboard[2] ],
+                                                "one_time_keyboard": true
+                                                }
+                                };
         return keyboard_autores;
 
     },

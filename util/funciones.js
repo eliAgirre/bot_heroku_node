@@ -121,6 +121,22 @@ module.exports = {
       
     },
 
+    findEnArraySinValidar: function(text, array) {
+
+      var encontrado = false;
+      //console.log("array length: "+array.length);
+
+      for (i=0;i<array.length;i++) {
+        //console.log(array[i])
+        if( text == array[i] ){
+            encontrado = true;
+        }
+      }          
+
+      return encontrado;
+      
+    },
+
     findEnArray: function(text, array, nombreArray) {
 
       var encontrado = false;

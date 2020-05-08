@@ -127,7 +127,7 @@ bot.onText(/^\/test/, function(msg) {
     let i=0, i1=0, i2=0, ea=0, ea1=0, g=0;
     bot.sendMessage(cid,  oper.commandTest(msg)+"¿Qué autor quieres elegir para hacer el test?", listas.getTestKeyboardAutores());
     //bot.onText(/.+/g, function(msg, match) {
-    bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens/, (msg) => {
+    bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens|OpositaTest|Daypo|PreparaTic/, (msg) => {
         textoAutor = msg.text;
         if( funciones.findAutores(textoAutor) ){
             let autor = listas.listAutores();
@@ -170,7 +170,8 @@ bot.onText(/^\/test/, function(msg) {
                     });
                 }
             } // INAP
-            else if( autorElegido === autor[1] | autorElegido === autor[2] ){ // Emmilio o Adams
+            else if( autorElegido === autor[1] | autorElegido === autor[2] | autorElegido === autor[5]
+                     | autorElegido === autor[6] | autorElegido === autor[7] ){ // Emmilio o Adams u OpositaTest o Daypo o PreparaTic
                 if( ea < 1 ){
                     bot.sendMessage(msg.chat.id, "¿Qué bloque quieres?", listas.getTestKeyboardBloques());
                     ea++;
@@ -184,7 +185,10 @@ bot.onText(/^\/test/, function(msg) {
                             if( ea1 < 1 ){
                                 bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
                                 if( autorElegido === autor[1]) com = command[16];
-                                else com = command[17];
+                                else if( autorElegido === autor[2]) com = command[17];
+                                else if( autorElegido === autor[5]) com = command[21];
+                                else if( autorElegido === autor[6]) com = command[22];
+                                else if( autorElegido === autor[7]) com = command[23];
                                 bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() ).then(() => {
                                     textoAutor = '', textoBloque = '';
                                 });
@@ -241,18 +245,23 @@ bot.onText(/^\/inap/, (msg) => {
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
 });
-// test emilio o adams
-bot.onText(/^\/emilio|^\/adams/, (msg) => {
+// test emilio o adams u opositatest o daypo o preparatic
+bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic/, (msg) => {
     let db = clientMongo.getDb(), comando = msg.text.toString();
     let questPersonalized = [];
     if( comando == command[16] ){ logs.logTestEmilio(msg); }
     else if( comando == command[17] ){ logs.logTestAdams(msg); }
+    else if( comando == command[21] ){ logs.logTestOpositaTest(msg); }
+    else if( comando == command[22] ){ logs.logTestDaypo(msg); }
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); }
         if( search_autor === '' ){
             if( comando == command[16] ){ search_autor = "Emilio del bloque "+selected[1]; autor = "Emilio"; }
             else if( comando == command[17] ){ search_autor = "Adams del bloque "+selected[1]; autor = "Adams"; }
+            else if( comando == command[21] ){ search_autor = "OpositaTest del bloque "+selected[1]; autor = "OpositaTest"; }
+            else if( comando == command[22] ){ search_autor = "Daypo del bloque "+selected[1]; autor = "Daypo"; }
+            else if( comando == command[23] ){ search_autor = "PreparaTic del bloque "+selected[1]; autor = "PreparaTic"; }
             bloque_search = selected[1];
             selected = [];
         }
