@@ -36,7 +36,7 @@ const error_cambio_comando = "Para cambiar debes escribir el comando "+command[1
 var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [], selected = [];
 var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '', search_autor = '', bloque_search = '', autor = '';
 // comaandos
-bot.onText(/^\/start/, (msg) => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = ''; bot.sendMessage(msg.chat.id, oper.commandStart(msg)); });
+bot.onText(/^\/start/, (msg) => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = ''; bot.sendMessage(msg.chat.id, oper.commandStart(msg), listas.getTestKeyboardBlank()); });
 // help
 bot.onText(/^\/help/, (msg) => { bot.sendMessage(msg.chat.id, oper.commandHelp(msg)); });
 // quiz

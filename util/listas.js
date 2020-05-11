@@ -161,33 +161,30 @@ module.exports = {
 
     getTestKeyboardAutores: function() {
         
-        filas = 3;
-        columnas = 3
-        autores = this.listAutores();
-        numAutores = autores.length; //autorXfila = Math.trunc(numAutores/filas);
-        autorFila0 = [];
-        autorFila1 = [];
-        autorFila2 = [];
+        let columnas = 3;
+        let autores = this.listAutores(); // let filas = 3; numAutores = autores.length; autorXfila = Math.trunc(numAutores/filas);
+        let autorXfila = [];
+        let keyboard = [];
+        let keyboard_autores = {};
 
-        for(var i=0;i<columnas;i++){ //console.log("autor: "+autores[i]);
-            autorFila0.push(autores[i]);
+        for(var i=0; i<=autores.length; i++){
+            if (autores[i] !== undefined){
+                autorXfila.push(autores[i]);
+            }
+            if( i > 0){
+                if( (i+1) % columnas == 0){
+                    keyboard.push(autorXfila);
+                    autorXfila = [];
+                }
+            }
         }
-        for(var i=columnas;i<(columnas*2);i++){ //console.log("autor: "+autores[i]);
-            autorFila1.push(autores[i]);
-        }
-        //for(var i=columnas*2;i<(columnas*3);i++){
-        for(var i=columnas*2;i<numAutores;i++){
-            autorFila2.push(autores[i]);
-        }
-        keyboard = [ autorFila0, autorFila1, autorFila2 ];
 
-        let keyboard_autores = {
-                                "reply_markup": {
-                                                //"keyboard": [this.listAutores()],
-                                                "keyboard": [ keyboard[0], keyboard[1], keyboard[2] ],
-                                                "one_time_keyboard": true
-                                                }
-                                };
+        keyboard_autores = {
+                            "reply_markup": {
+                                "keyboard": keyboard, //"keyboard": [this.listAutores()],
+                                "one_time_keyboard": true
+                            }};
+
         return keyboard_autores;
 
     },
@@ -201,7 +198,29 @@ module.exports = {
 
     getTestKeyboardYears: function(){
 
-        let keyboard_years = { "reply_markup": { "keyboard": [this.listYears()], "one_time_keyboard": true } };
+        let columnas = 3;
+        let years = this.listYears();
+        let yearXfila = [];
+        let keyboard = [];
+        let keyboard_years = {};
+
+        for(var i=0; i<=years.length; i++){
+            if (years[i] !== undefined){
+                yearXfila.push(years[i]);
+            }
+            if( i > 0){
+                if( (i+1) % columnas == 0){
+                    keyboard.push(yearXfila);
+                    yearXfila = [];
+                }
+            }
+        }
+
+        keyboard_years  =   {
+                            "reply_markup": { //"keyboard": [this.listYears()],
+                                "keyboard": keyboard,
+                                "one_time_keyboard": true
+                            }}
 
         return keyboard_years;
     },
