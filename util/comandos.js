@@ -94,7 +94,7 @@ module.exports = {
             }
             else if ( accion == command[15] | accion == command[16] | accion == command[17] | accion == command[18] 
                     | accion == command[19] | accion == command[20] | accion == command[21] | accion == command[22]
-                    | accion == command[23]){ //test personalizados
+                    | accion == command[23] | accion == command[24] ){ //test personalizados
                 response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+"*.\nRespuestas *correctas* : "+datos_score[0].toString()+".\nRespuestas *incorrectas*: "+datos_score[1].toString()+".\n"
             }
             else
@@ -144,38 +144,44 @@ module.exports = {
     commandDefault: function(msg){
         logs.logDefault(msg);
         let response = '';
-        texto = msg.text.toString();
-        comando = texto;
-        comando = comando.trim();
-        comando_wiki = texto.substring(0, 6);
-        comando_wiki = comando_wiki.trim().toLowerCase();
-        search = texto.substring(5, texto.length);
+        if( msg.text !== undefined){
+
+            texto = msg.text.toString();
+            comando = texto;
+            comando = comando.trim();
+            comando_wiki = texto.substring(0, 6);
+            comando_wiki = comando_wiki.trim().toLowerCase();
+            search = texto.substring(5, texto.length);
+            
+            console.log("texto: "+texto);
+            console.log("comando: "+comando);
+            console.log("comando wiki: "+comando_wiki);
+            console.log("search: "+search);
+
+            if ( !funciones.findCommnad(comando) & !funciones.findCommnad(comando_wiki) & comando === 'https:' ){ // si no es ningun comando
+
+                if ( !funciones.findAutores(texto) & !funciones.findBloques(texto) & !funciones.findYears(texto) & !funciones.findPromociones(texto) ){ // si no es ningun autor o bloque o promocion
+                    response = "No te entiendo \"" +texto+ "\"\nPuedes escribir el comando "+command[1]+" para saber qué comando utilizar."
+                }
+            }
+            else{
+    
+                if ( funciones.findCommnad(comando_wiki) ){ // si es el comando wiki
         
-        console.log("texto: "+texto);
-        console.log("comando: "+comando);
-        console.log("comando wiki: "+comando_wiki);
-        console.log("search: "+search);
-
-        if ( !funciones.findCommnad(comando) & !funciones.findCommnad(comando_wiki) & comando === 'https:' ){ // si no es ningun comando
-
-            if ( !funciones.findAutores(texto) & !funciones.findBloques(texto) & !funciones.findYears(texto) & !funciones.findPromociones(texto) ){ // si no es ningun autor o bloque o promocion
-                response = "No te entiendo \"" +texto+ "\"\nPuedes escribir el comando "+command[1]+" para saber qué comando utilizar."
+                    if( comando_wiki === command[13] ){
+                        if (search.length === 0)
+                            response = "No has puesto nada después de "+command[13]+" para buscarlo."
+                    }
+                    
+                }
+                /*
+                else{
+                    response = "No existe el comando en este bot. Para ello puedes escribir /help.";
+                }*/
             }
         }
         else{
-
-            if ( funciones.findCommnad(comando_wiki) ){ // si es el comando wiki
-    
-                if( comando_wiki === command[13] ){
-                    if (search.length === 0)
-                        response = "No has puesto nada después de "+command[13]+" para buscarlo."
-                }
-                
-            }
-            /*
-            else{
-                response = "No existe el comando en este bot. Para ello puedes escribir /help.";
-            }*/
+            response = "Si necesita ayuda puedes escribir /help.";
         }
 
         return response;

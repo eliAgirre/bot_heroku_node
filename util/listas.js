@@ -53,7 +53,8 @@ module.exports = {
             'searches'    : 'Busquedas wiki.',
             'opositatest' : 'Test del OpositaTest personalido.',
             'daypo'       : 'Test del Daypo personalido.',
-            'preparatic'  : 'Test del Daypo personalido.'
+            'preparatic'  : 'Test del Daypo personalido.',
+            'opostestic'  : 'Test del OposTestTic personalido.'
         }
         
         return commands;
@@ -68,7 +69,8 @@ module.exports = {
                         "OpoSapiens",   //4
                         "OpositaTest",  //5
                         "Daypo",        //6
-                        "PreparaTic"    //7
+                        "PreparaTic",   //7
+                        "OposTestTic"   //8
                         ];
 
         return autores;
@@ -152,7 +154,8 @@ module.exports = {
                                 "/searches",  //20
                                 "/opositatest",//21
                                 "/daypo",      //22
-                                "/preparatic"  //23
+                                "/preparatic", //23
+                                "/opostestic" //24
                             ];
 
         return array_commands;

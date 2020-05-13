@@ -3,6 +3,7 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const log = require('bristol');
 const palin = require('palin');
+var pdf = require('html-pdf');
 log.addTarget('console').withFormatter(palin);
 log.info("We're up and running!", {port: 3000});
 // webhook ---------------
@@ -127,7 +128,7 @@ bot.onText(/^\/test/, function(msg) {
     let i=0, i1=0, i2=0, ea=0, ea1=0, g=0;
     bot.sendMessage(cid,  oper.commandTest(msg)+"¿Qué autor quieres elegir para hacer el test?", listas.getTestKeyboardAutores());
     //bot.onText(/.+/g, function(msg, match) {
-    bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens|OpositaTest|Daypo|PreparaTic/, (msg) => {
+    bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens|OpositaTest|Daypo|PreparaTic|OposTestTic/, (msg) => {
         textoAutor = msg.text;
         if( funciones.findAutores(textoAutor) ){
             let autor = listas.listAutores();
@@ -170,8 +171,8 @@ bot.onText(/^\/test/, function(msg) {
                     });
                 }
             } // INAP
-            else if( autorElegido === autor[1] | autorElegido === autor[2] | autorElegido === autor[5]
-                     | autorElegido === autor[6] | autorElegido === autor[7] ){ // Emmilio o Adams u OpositaTest o Daypo o PreparaTic
+            else if(  autorElegido === autor[1] | autorElegido === autor[2] | autorElegido === autor[5]
+                    | autorElegido === autor[6] | autorElegido === autor[7] | autorElegido === autor[8] ){ // Emmilio o Adams u OpositaTest o Daypo o PreparaTic o TestOposTic
                 if( ea < 1 ){
                     bot.sendMessage(msg.chat.id, "¿Qué bloque quieres?", listas.getTestKeyboardBloques());
                     ea++;
@@ -189,6 +190,7 @@ bot.onText(/^\/test/, function(msg) {
                                 else if( autorElegido === autor[5]) com = command[21];
                                 else if( autorElegido === autor[6]) com = command[22];
                                 else if( autorElegido === autor[7]) com = command[23];
+                                else if( autorElegido === autor[8]) com = command[24];
                                 bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() ).then(() => {
                                     textoAutor = '', textoBloque = '';
                                 });
@@ -202,7 +204,7 @@ bot.onText(/^\/test/, function(msg) {
                 if( g < 1 ){
                     response += selected[0];
                     if( autorElegido === autor[3]) com = command[18];
-                    else com = command[19];
+                    else if( autorElegido === autor[4]) com = command[19];
                     bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
                     bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() );
                     g++;
@@ -246,13 +248,14 @@ bot.onText(/^\/inap/, (msg) => {
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
 });
 // test emilio o adams u opositatest o daypo o preparatic
-bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic/, (msg) => {
+bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostestic/, (msg) => {
     let db = clientMongo.getDb(), comando = msg.text.toString();
     let questPersonalized = [];
     if( comando == command[16] ){ logs.logTestEmilio(msg); }
     else if( comando == command[17] ){ logs.logTestAdams(msg); }
     else if( comando == command[21] ){ logs.logTestOpositaTest(msg); }
     else if( comando == command[22] ){ logs.logTestDaypo(msg); }
+    else if( comando == command[24] ){ logs.logTestOposTic(msg); }
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); }
@@ -262,6 +265,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic/, (msg) => 
             else if( comando == command[21] ){ search_autor = "OpositaTest del bloque "+selected[1]; autor = "OpositaTest"; }
             else if( comando == command[22] ){ search_autor = "Daypo del bloque "+selected[1]; autor = "Daypo"; }
             else if( comando == command[23] ){ search_autor = "PreparaTic del bloque "+selected[1]; autor = "PreparaTic"; }
+            else if( comando == command[24] ){ search_autor = "OposTestTic del bloque "+selected[1]; autor = "OposTestTic"; }
             bloque_search = selected[1];
             selected = [];
         }
@@ -318,11 +322,20 @@ bot.onText(/^\/stop/, (msg) => {
 });
 // wiki [whatever]
 bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
-    if( oper.commandWiki(msg, match[1]).length > 0 ) { bot.sendMessage(msg.chat.id, oper.commandWiki(msg, match[1]), { parse_mode: "HTML" }).then(() => { db_operations.insertSearchUser( oper.createSearchObject(msg, response) ); }); }
+    let response = ''; if( oper.commandWiki(msg, match[1]).length > 0 ) { response = oper.commandWiki(msg, match[1]); bot.sendMessage(msg.chat.id, oper.commandWiki(msg, match[1]), { parse_mode: "HTML" }).then(() => { db_operations.insertSearchUser( oper.createSearchObject(msg, response) ); }); }
 });
+/*
 bot.onText(/^\/searches/, (msg) => {
     //var fs = require('fs');
     logs.logSearches(msg);
+    var contenido = `<h1>Esto es un test de html-pdf</h1><p>Estoy generando PDF a partir de este código HTML sencillo</p>`;
+    pdf.create(contenido).toFile(externalUrl+'/prueba.pdf', function(err, res) {
+        if (err){
+            console.log(err);
+        } else {
+            console.log(res);
+        }
+    });
     var data = 'prueba'; 
     const fileOptions = {
         // Explicitly specify the file name.
@@ -330,8 +343,19 @@ bot.onText(/^\/searches/, (msg) => {
         // Explicitly specify the MIME type.
         contentType: 'application/pdf',
       };
-    bot.sendDocument(msg.chat.id, data, {}, fileOptions);
+    //bot.sendDocument(msg.chat.id, data, {}, fileOptions);
+    bot.sendDocument(msg.chat.id, data, {fileName: 'prueba.pdf'});
     bot.sendMessage(msg.chat.id, data);
 });
+
+// Matches /photo
+bot.onText(/\/photo/, function onPhotoText(msg) {
+    // From file path
+    const photo = `${__dirname}/../test/data/photo.jpg`;
+    bot.sendPhoto(msg.chat.id, photo, {
+      caption: "I'm a bot!"
+    });
+});
+*/
 // default
 bot.on('message', (msg) =>  { bot.sendMessage(msg.chat.id, oper.commandDefault(msg)); });

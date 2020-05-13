@@ -120,6 +120,13 @@ module.exports = {
         log.info(log_info, { scope: command[23] });
         funciones.writeFile(file_log, log_info);
     },
+    
+    logTestOposTic: function(msg){
+        console.log("Comando "+command[24])
+        const log_info = `El comando `+command[24]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+        log.info(log_info, { scope: command[24] });
+        funciones.writeFile(file_log, log_info);
+    },
 
     logStop: function(msg){
         console.log("Comando "+command[12])
