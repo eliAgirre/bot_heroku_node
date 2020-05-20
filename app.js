@@ -348,14 +348,14 @@ bot.onText(/^\/searches/, (msg) => {
     bot.sendMessage(msg.chat.id, data);
 });
 */
-// Matches /photo
 bot.onText(/\/photo/, function onPhotoText(msg) {
     // From file path
-    const photo = `${__dirname}/kitten.jpg`;
+    //const photo = `${__dirname}/kitten.jpg`;
+    const photo = "kitten.jpg";
     bot.sendPhoto(msg.chat.id, photo, {
-      caption: "I'm a bot!"
+      caption: "I'm a kitten!"
     });
+    console.log(msg);
 });
-
 // default
 bot.on('message', (msg) =>  { bot.sendMessage(msg.chat.id, oper.commandDefault(msg)); });
