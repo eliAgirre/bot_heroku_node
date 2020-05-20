@@ -347,15 +347,15 @@ bot.onText(/^\/searches/, (msg) => {
     bot.sendDocument(msg.chat.id, data, {fileName: 'prueba.pdf'});
     bot.sendMessage(msg.chat.id, data);
 });
-
+*/
 // Matches /photo
 bot.onText(/\/photo/, function onPhotoText(msg) {
     // From file path
-    const photo = `${__dirname}/../test/data/photo.jpg`;
+    const photo = `${__dirname}/kitten.jpg`;
     bot.sendPhoto(msg.chat.id, photo, {
       caption: "I'm a bot!"
     });
 });
-*/
+
 // default
 bot.on('message', (msg) =>  { bot.sendMessage(msg.chat.id, oper.commandDefault(msg)); });
