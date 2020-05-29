@@ -324,10 +324,11 @@ bot.onText(/^\/stop/, (msg) => {
 bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
     let response = ''; if( oper.commandWiki(msg, match[1]).length > 0 ) { response = oper.commandWiki(msg, match[1]); bot.sendMessage(msg.chat.id, oper.commandWiki(msg, match[1]), { parse_mode: "HTML" }).then(() => { db_operations.insertSearchUser( oper.createSearchObject(msg, response) ); }); }
 });
-/*
+
 bot.onText(/^\/searches/, (msg) => {
     //var fs = require('fs');
     logs.logSearches(msg);
+    /*
     var contenido = `<h1>Esto es un test de html-pdf</h1><p>Estoy generando PDF a partir de este código HTML sencillo</p>`;
     pdf.create(contenido).toFile(externalUrl+'/prueba.pdf', function(err, res) {
         if (err){
@@ -336,18 +337,14 @@ bot.onText(/^\/searches/, (msg) => {
             console.log(res);
         }
     });
-    var data = 'prueba'; 
-    const fileOptions = {
-        // Explicitly specify the file name.
-        filename: 'prueba.pdf',
-        // Explicitly specify the MIME type.
-        contentType: 'application/pdf',
-      };
-    //bot.sendDocument(msg.chat.id, data, {}, fileOptions);
-    bot.sendDocument(msg.chat.id, data, {fileName: 'prueba.pdf'});
-    bot.sendMessage(msg.chat.id, data);
+    */
+    const nombre_archivo = "searches.pdf";
+    bot.sendPhoto(msg.chat.id, nombre_archivo, { caption: "Searches"}).then(()=>{
+    	console.log(msg);
+    });
+    
 });
-*/
+
 bot.onText(/\/photo/, function onPhotoText(msg) {
     // From file path
     //const photo = `${__dirname}/kitten.jpg`;
