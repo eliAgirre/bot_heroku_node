@@ -339,7 +339,7 @@ bot.onText(/^\/searches/, (msg) => {
     });
     */
     const nombre_archivo = "searches.pdf";
-    bot.sendPhoto(msg.chat.id, nombre_archivo, { caption: "Searches"}).then(()=>{
+    bot.sendDocument(msg.chat.id, nombre_archivo, { caption: "Searches"}).then(()=>{
     	console.log(msg);
     });
     
