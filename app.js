@@ -327,7 +327,18 @@ bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
 
 bot.onText(/^\/searches/, (msg) => {
     //var fs = require('fs');
-    logs.logSearches(msg);       
+    logs.logSearches(msg);
+    const nombreFichero = "searches.pdf";
+    /*
+    var contenido = `<h1>Esto es un test de html-pdf</h1><p>Estoy generando PDF a partir de este código HTML sencillo</p>`;
+    pdf.create(contenido).toFile(nombreFichero, function(err, res) {
+        if (err){
+            console.log(err);
+        } else {
+            console.log(res);
+        }
+    });
+    */
     bot.sendDocument(msg.chat.id, nombreFichero, {caption: "Searches"  }).then(() => {
         console.log(msg);
     });
