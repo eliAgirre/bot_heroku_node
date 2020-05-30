@@ -1,6 +1,9 @@
 # dotenv environment variables file
 .env
 
+# dependencies
+node_modules
+
 # files
 logs.txt
 /database/preguntas.quiz.zip
