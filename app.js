@@ -329,8 +329,9 @@ bot.onText(/^\/searches/, (msg) => {
     //var fs = require('fs');
     logs.logSearches(msg);
     /*
+    const nombreFichero = "searches.pdf";
     var contenido = `<h1>Esto es un test de html-pdf</h1><p>Estoy generando PDF a partir de este código HTML sencillo</p>`;
-    pdf.create(contenido).toFile(externalUrl+'/prueba.pdf', function(err, res) {
+    pdf.create(contenido).toFile(nombreFichero, function(err, res) {
         if (err){
             console.log(err);
         } else {
@@ -338,11 +339,9 @@ bot.onText(/^\/searches/, (msg) => {
         }
     });
     */
-    const nombre_archivo = "searches.pdf";
-    bot.sendDocument(msg.chat.id, nombre_archivo, { caption: "Searches"}).then(()=>{
-    	console.log(msg);
+    bot.sendDocument(msg.chat.id, "searches.pdf", {caption: "Searches"  }).then(() => {
+        console.log(msg);
     });
-    
 });
 
 bot.onText(/\/photo/, function onPhotoText(msg) {
