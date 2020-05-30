@@ -9,3 +9,7 @@ Install with `npm install mongodb --save` <br>
 
 ## Run the quiz
 Run the quiz with `npm start` or `node app.js`
+
+## Emojis
+https://apps.timwhitlock.info/emoji/tables/unicode
+https://emojipedia.org/

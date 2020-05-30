@@ -30,9 +30,10 @@ const listas = require('./util/listas.js'); // constantes listas/arrays
 const keyboard = listas.getKeyboard();
 const command = listas.arrayCommands();
 // constantes errores ------
-const error_cargar_array = "Error al cargar el array de preguntas por";
+const WARNING = '⚠️', ARROW = '➡️';
+const error_cargar_array = WARNING+" Error al cargar el array de preguntas por";
 const error_no_bien_elegido = "No se ha elegido bien.\nPara ello debe escribir el comando.\nEjemplo: ";
-const error_cambio_comando = "Para cambiar debes escribir el comando "+command[12]+" y después el comando correspondiente al";
+const error_cambio_comando = "Para cambiar de test "+ARROW+" "+command[12]+" y después el comando correspondiente al";
 // variables globales- ------ var array = funciones.readFile(file_preguntas); var preguntas = funciones.getPreguntas(array);
 var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [], selected = [];
 var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '', search_autor = '', bloque_search = '', autor = '';
