@@ -3,7 +3,7 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const log = require('bristol');
 const palin = require('palin');
-var pdf = require('html-pdf');
+//var pdf = require('html-pdf');
 log.addTarget('console').withFormatter(palin);
 log.info("We're up and running!", {port: 3000});
 // webhook ---------------
@@ -327,31 +327,10 @@ bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
 
 bot.onText(/^\/searches/, (msg) => {
     //var fs = require('fs');
-    logs.logSearches(msg);
-    /*
-    const nombreFichero = "searches.pdf";
-    var contenido = `<h1>Esto es un test de html-pdf</h1><p>Estoy generando PDF a partir de este código HTML sencillo</p>`;
-    pdf.create(contenido).toFile(nombreFichero, function(err, res) {
-        if (err){
-            console.log(err);
-        } else {
-            console.log(res);
-        }
-    });
-    */
-    bot.sendDocument(msg.chat.id, "searches.pdf", {caption: "Searches"  }).then(() => {
+    logs.logSearches(msg);       
+    bot.sendDocument(msg.chat.id, nombreFichero, {caption: "Searches"  }).then(() => {
         console.log(msg);
     });
-});
-
-bot.onText(/\/photo/, function onPhotoText(msg) {
-    // From file path
-    //const photo = `${__dirname}/kitten.jpg`;
-    const photo = "kitten.jpg";
-    bot.sendPhoto(msg.chat.id, photo, {
-      caption: "I'm a kitten!"
-    });
-    console.log(msg);
 });
 // default
 bot.on('message', (msg) =>  { bot.sendMessage(msg.chat.id, oper.commandDefault(msg)); });
