@@ -326,7 +326,6 @@ bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
 });
 
 bot.onText(/^\/searches/, (msg) => {
-    //var fs = require('fs');
     logs.logSearches(msg);
     const nombreFichero = "searches.pdf";
     /*
