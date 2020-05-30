@@ -325,7 +325,8 @@ bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
     let response = ''; if( oper.commandWiki(msg, match[1]).length > 0 ) { response = oper.commandWiki(msg, match[1]); bot.sendMessage(msg.chat.id, oper.commandWiki(msg, match[1]), { parse_mode: "HTML" }).then(() => { db_operations.insertSearchUser( oper.createSearchObject(msg, response) ); }); }
 });
 
-bot.onText(/^\/searches/, (msg) => { 
+bot.onText(/^\/searches/, (msg) => {
+    //var fs = require('fs');
     logs.logSearches(msg);
     const nombreFichero = "searches.pdf";
     /*
