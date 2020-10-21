@@ -98,6 +98,13 @@ module.exports = {
         return years;
     },
 
+    listIdiomas: function(){
+
+        const years = ["es","en","fr","pt"];
+
+        return years;
+    },
+
     getKeyboard: function(){
 
         const OPCION_A = 'a'
@@ -251,5 +258,36 @@ module.exports = {
 
         return keyboard_blank;
 
+    },
+
+    getKeyboardIdioma: function(){
+
+        const ES = 'es'
+        const EN = 'en'
+        const FR = 'fr'
+        const PT = 'pt'
+
+        keyboard = {"inline_keyboard": 
+                        [[
+                            {
+                                "text": 'Español',
+                                "callback_data": ES            
+                            }, 
+                            {
+                                "text": 'Inglés',
+                                "callback_data": EN            
+                            },
+                                            {
+                                "text": 'Francés',
+                                "callback_data": FR            
+                            },
+                                            {
+                                "text": 'Portugués',
+                                "callback_data": PT            
+                            }
+                        ]]
+                    }
+
+        return keyboard;
     }
 }

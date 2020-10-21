@@ -71,7 +71,7 @@ module.exports = {
 
     commandTestInap: function(msg){
         logs.logTest(msg);
-        let response = "Has elegido realizar un test personalizado. "+HANDS+" \n" 
+        let response = "Has elegido realizar un test de INAP. "+HANDS+" \n" 
         return response;   
     },
 
@@ -118,17 +118,18 @@ module.exports = {
         return doc;
     },
 
-    commandWiki: function(msg, search){
-        logs.logWiki(msg);
-        let response = ''
-        if( search.length > 0 ){
-            search = search.trim();
-            search = funciones.replaceSpace(search,"_");
-            console.log("search: "+search);
-            response = "https://es.wikipedia.org/wiki/"+search
-        }
+   commandWiki: function(msg, search){
+    logs.logWiki(msg);
+    let response = ''
+    if( search.length > 0 ){
+        search = search.trim();
+        search = funciones.replaceSpace(search,"_");
+        console.log("search: "+search);
+        console.log("language code: "+msg.from.language_code);
+        response = "https://"+msg.from.language_code+".wikipedia.org/wiki/"+search
+    }
 
-        return response;
+    return response;
     },
 
     createSearchObject: function(msg, response){

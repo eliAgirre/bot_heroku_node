@@ -6,6 +6,7 @@ const autores = listas.listAutores();
 const bloques = listas.listBloques();
 const years = listas.listYears();
 const promociones = listas.listPromociones();
+const idiomas = listas.listIdiomas();
 var knownUsers = [];
 var userStep = [];
 
@@ -112,6 +113,23 @@ module.exports = {
         for (i=0;i<promociones.length;i++) {
           //console.log(promociones[i])
           if( text == promociones[i] ){
+              encontrado = true;
+          }
+        }          
+      }
+
+      return encontrado;
+      
+    },
+
+    findIdiomas: function(text) {
+
+      var encontrado = false;
+
+      if( !validaciones.arrayVacio(idiomas, "idiomas")){
+        for (i=0;i<idiomas.length;i++) {
+          //console.log(autores[i])
+          if( text == idiomas[i] ){
               encontrado = true;
           }
         }          
