@@ -97,12 +97,20 @@ module.exports = {
 
         return years;
     },
-
+    
     listIdiomas: function(){
 
-        const years = ["es","en","fr","pt"];
+        const idioma = ["es","en","fr","pt","eu","ca","gl","an","ast"];
 
-        return years;
+        return idioma;
+    },
+
+    objectIdioma: function(){
+
+        var idioma = { "es" : "Español", "en" : "Inglés", "fr": "Francés", "pt" : "Portugués", "eu" : "Euskara", "ca": "Català", "gl": "Gallego", "an": "Aragonés", "ast": "Asturiano" };
+
+        return idioma;
+
     },
 
     getKeyboard: function(){

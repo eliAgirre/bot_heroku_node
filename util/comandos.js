@@ -119,17 +119,39 @@ module.exports = {
     },
 
    commandWiki: function(msg, search){
-    logs.logWiki(msg);
-    let response = ''
-    if( search.length > 0 ){
-        search = search.trim();
-        search = funciones.replaceSpace(search,"_");
-        console.log("search: "+search);
-        console.log("language code: "+msg.from.language_code);
-        response = "https://"+msg.from.language_code+".wikipedia.org/wiki/"+search
-    }
+       
+        logs.logWiki(msg);
+        let response = ''; let lang = msg.from.language_code;
+        console.log("language code: "+lang);
+        if( search.length > 0 ){
+            idioma = search.substring(0,2);
+            idioma = idioma.toLowerCase(); console.log("idioma: "+idioma);
+            if( funciones.findIdiomas(idioma) ){
+                if( idioma !== undefined || idioma !== '' || idioma != lang ){ lang = idioma; search = search.substring(2);  }
+                search = search.trim();
+                search = funciones.replaceSpace(search,"_");
+                console.log("search: "+search);
+                if( idioma !== undefined || idioma !== ''){ response = "https://"+idioma+".wikipedia.org/wiki/"+search }
+                else { response = "https://"+lang+".wikipedia.org/wiki/"+search }
+            }
+            else {
+                let text = search.substring(0,3);
+                let espacio = text.substring(2);
+                if( espacio === ' '){
+                    search = search.substring(2);
+                    search = search.trim();
+                    search = funciones.replaceSpace(search,"_");
+                    response = "https://"+lang+".wikipedia.org/wiki/"+search
+                }
+                else {
+                    search = search.trim();
+                    search = funciones.replaceSpace(search,"_");
+                    response = "https://"+lang+".wikipedia.org/wiki/"+search
+                } 
+            }
+        }
 
-    return response;
+        return response;
     },
 
     createSearchObject: function(msg, response){
