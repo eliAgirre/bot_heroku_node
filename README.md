@@ -1,6 +1,9 @@
 # bot_heroku_node
 
-## Install dependencies
+## Install dependencies 
+Install with `npm install`
+
+## Install dependencies to save in package.json
 Install with `npm install dotenv` <br>
 Install with `npm install node-telegram-bot-api` <br>
 Install with `npm install palin --save` <br>
