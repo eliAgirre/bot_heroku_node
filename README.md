@@ -1,4 +1,4 @@
-# bot_heroku_node
+# Quiz Bot
 
 ## Install dependencies 
 Install with `npm install`
