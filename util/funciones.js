@@ -427,6 +427,7 @@ module.exports = {
     getDatosPregunta: function(array){
 
       let bloque = ''
+      let tema = ''
       let autor = ''
       let enunciado = ''
       let opcion_a = ''
@@ -441,6 +442,7 @@ module.exports = {
         for(i=0;i<array.length;i++){
           //console.log(array[i]);
           bloque = array[i].bloque;
+          tema = array[i].tema;
           autor = array[i].autor;
           enunciado = array[i].enunciado;
           opcion_a = array[i].opcion_a;
@@ -450,7 +452,7 @@ module.exports = {
           resp_correcta = array[i].resp_correcta;
         }
 
-        datos_pregunta = new model_pregunta(bloque, autor,  enunciado, opcion_a, opcion_b, opcion_c, opcion_d, resp_correcta);
+        datos_pregunta = new model_pregunta(bloque, tema, autor, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, resp_correcta);
       }
 
       return datos_pregunta;
@@ -491,7 +493,7 @@ module.exports = {
 
     getResponse: function(m_datos){
 
-      return response = "* "+m_datos.bloque+")* "+m_datos.enunciado+"\n "+m_datos.opcion_a+" \n "+m_datos.opcion_b+" \n "+m_datos.opcion_c+" \n "+m_datos.opcion_d+" \n\n De *"+m_datos.autor+"*";
+      return response = "* "+m_datos.bloque+"-T"+m_datos.tema+")* "+m_datos.enunciado+"\n "+m_datos.opcion_a+" \n "+m_datos.opcion_b+" \n "+m_datos.opcion_c+" \n "+m_datos.opcion_d+" \n\n De *"+m_datos.autor+"*";
 
     },
 
@@ -507,6 +509,7 @@ module.exports = {
 
       preg[0] = m_datos.bloque;
       preg[1] = m_datos.autor;
+      preg[2] = m_datos.tema;
       return preg;
 
     }

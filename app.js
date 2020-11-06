@@ -49,7 +49,7 @@ bot.onText(/^\/quiz/, (msg) => {
         db.collection(coleccion_preguntas).find().toArray((err, results) => { // consulta preguntas
             if (err) { log.error(err, { scope: 'find '+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                db_questions.push(new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
+                db_questions.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
             });
             db_questions = funciones.shuffle(db_questions); // random preguntas
             let m_datos = funciones.getDatosPregunta(db_questions), response = funciones.getResponse(m_datos);
@@ -73,7 +73,7 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
                 db.collection(coleccion_preguntas).find({ "bloque" : bloque_elegido.toUpperCase() }).toArray((err, results) => { // consulta bloque
                     if (err) { log.error(err, { scope: 'find bloque'+coleccion_preguntas } ); }
                     results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                        preguntasBloque.push(new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
+                        preguntasBloque.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
                     });
                     if( !validaciones.arrayVacio(preguntasBloque, "preguntasBloque") ){
                         preguntasBloque = funciones.shuffle(preguntasBloque);
@@ -103,7 +103,7 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
                 db.collection(coleccion_preguntas).find({$or:[{ "autor" : autorLI1 },{ "autor" : autorPI1 } ]}).toArray((err, results) => { // consulta autor
                     if (err) { log.error(err, { scope: 'find autor '+autorLI1+" "+autorPI1+" "+coleccion_preguntas } ); }
                     results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                        preguntasAnio.push(new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
+                        preguntasAnio.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
                     });
                 });
                 if( !validaciones.arrayVacio(preguntasAnio, "preguntasAnio") ){
@@ -235,7 +235,7 @@ bot.onText(/^\/inap/, (msg) => {
         db.collection(coleccion_preguntas).find({ "autor" : search_autor }).toArray((err, results) => { // consulta autor
             if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
+                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
                 questPersonalized.push(preg);
             });
             if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
@@ -273,7 +273,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
         db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor } ]}).toArray((err, results) => { // consulta autor
             if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
+                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
                 questPersonalized.push(preg);
             });
             if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
@@ -302,7 +302,7 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
         db.collection(coleccion_preguntas).find({ "autor" : search_autor }).toArray((err, results) => { // consulta autor
             if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                let preg = new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
+                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
                 questPersonalized.push(preg);
                 
             });
