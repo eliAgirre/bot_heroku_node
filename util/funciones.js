@@ -6,6 +6,7 @@ const autores = listas.listAutores();
 const bloques = listas.listBloques();
 const years = listas.listYears();
 const promociones = listas.listPromociones();
+const temas = listas.listTemas();
 const idiomas = listas.listIdiomas();
 var knownUsers = [];
 var userStep = [];
@@ -113,6 +114,23 @@ module.exports = {
         for (i=0;i<promociones.length;i++) {
           //console.log(promociones[i])
           if( text == promociones[i] ){
+              encontrado = true;
+          }
+        }          
+      }
+
+      return encontrado;
+      
+    },
+
+    findTemas: function(text) {
+
+      var encontrado = false;
+
+      if( !validaciones.arrayVacio(temas, "temas")){
+        for (i=0;i<temas.length;i++) {
+          //console.log(temas[i])
+          if( text == temas[i] ){
               encontrado = true;
           }
         }          

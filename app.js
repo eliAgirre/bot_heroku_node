@@ -3,14 +3,14 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const log = require('bristol');
 const palin = require('palin');
-//var pdf = require('html-pdf');
+//const pdf = require('html-pdf');
 log.addTarget('console').withFormatter(palin);
 log.info("We're up and running!", {port: 3000});
 // webhook ---------------
 const token = process.env.TOKEN;
 port = process.env.PORT || 443, host = '0.0.0.0',  // probably this change is not required
 externalUrl = process.env.CUSTOM_ENV_VARIABLE, token,
-bot = new TelegramBot(process.env.TOKEN, { webHook: { port : port, host : host } });
+bot = new TelegramBot(process.env.TOKEN, { webHook: { port : port, host : host }, filepath: false  });
 bot.setWebHook(externalUrl + ':443/bot' + token);
 // database --------------
 const clientMongo = require('./database/config.js');
@@ -35,10 +35,10 @@ const error_cargar_array = WARNING+" Error al cargar el array de preguntas por";
 const error_no_bien_elegido = "No se ha elegido bien.\nPara ello debe escribir el comando.\nEjemplo: ";
 const error_cambio_comando = "Para cambiar de test "+ARROW+" "+command[12]+" y después el comando correspondiente al";
 // variables globales- ------ var array = funciones.readFile(file_preguntas); var preguntas = funciones.getPreguntas(array);
-var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [], selected = [];
-var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '', search_autor = '', bloque_search = '', autor = '';
+var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [], selected = [], preguntasTema = [];
+var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '', search_autor = '', bloque_search = '', autor = '', tema_elegido = '', temaAbuscar = '', search_bloque = '';
 // comaandos
-bot.onText(/^\/start/, (msg) => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = ''; bot.sendMessage(msg.chat.id, oper.commandStart(msg), listas.getTestKeyboardBlank()); });
+bot.onText(/^\/start/, (msg) => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = ''; idiomaElegido = msg.from.language_code; bot.sendMessage(msg.chat.id, oper.commandStart(msg), listas.getTestKeyboardBlank()); });
 // help
 bot.onText(/^\/help/, (msg) => { bot.sendMessage(msg.chat.id, oper.commandHelp(msg)); });
 // quiz
@@ -49,7 +49,7 @@ bot.onText(/^\/quiz/, (msg) => {
         db.collection(coleccion_preguntas).find().toArray((err, results) => { // consulta preguntas
             if (err) { log.error(err, { scope: 'find '+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                db_questions.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
+                db_questions.push(new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
             });
             db_questions = funciones.shuffle(db_questions); // random preguntas
             let m_datos = funciones.getDatosPregunta(db_questions), response = funciones.getResponse(m_datos);
@@ -58,6 +58,86 @@ bot.onText(/^\/quiz/, (msg) => {
             bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz."); }
+});
+// test por tema
+bot.onText(/^\/tema/, function(msg) {
+    let textoBloque='', textoTema = '', response = '';
+    let cont=-1, konta = -1;
+    let comando = msg.text.toString();
+    accion = comando;
+    //bot.sendMessage(msg.chat.id,  oper.commandBloque(msg)+"¿Qué bloque quieres?", listas.getTestKeyboardBloques());
+    if( konta < 1 ){
+        konta++;
+        bot.sendMessage(msg.chat.id, "¿Qué bloque quieres?", listas.getTestKeyboardBloques());
+        bot.onText(/B1|B2|B3|B4/, (msg) => {
+            textoBloque = msg.text;
+            if( funciones.findBloques(textoBloque) ){
+                let bloques = listas.listBloques();
+                bloque_elegido = funciones.textIncluyeArray(textoBloque, bloques, "listBloques" );
+                bloque_anterior = bloque_elegido;
+                selected[0]=bloque_elegido;
+                bot.sendMessage(msg.chat.id, oper.commandTema(msg)+"¿Qué tema quieres elegir?", listas.getTestKeyboardTemas());
+                cont++;
+                bot.onText(/T01|T02|T03|T04|T04|T05|T06|T07|T08|T09|T10|T11/, (msg) => {
+                    textoTema = msg.text;
+                    if( funciones.findTemas(textoTema) ){
+                        let tema = listas.listTemas();
+                        response = 'Has elegido realizar el test de *';
+                        tema_elegido = funciones.textIncluyeArray(textoTema, tema, "listTemas" );
+                        tema_anterior = tema_elegido;
+                        selected[1]=tema_elegido;
+                        for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]);
+                            response += selected[i]+" ";
+                        }
+                    }
+                    if( cont < 1 ){
+                        bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
+                        bot.sendMessage(msg.chat.id, "\nPulsa "+command[26], listas.getTestKeyboardBlank() ).then(() => {
+                            textoBloque = '', textoTema = '';
+                        });
+                        cont++;
+                    }
+                });
+
+            }
+        });
+    }
+});
+// test por bloque y tema
+bot.onText(/^\/blocXtema/, function(msg) {
+    logs.logTestTema(msg);
+    let db = clientMongo.getDb(), comando = msg.text.toString(), bloque_elegido = '', tema_elegido = '';
+    if( selected[0] != '' || selected[1] != '' ){
+        bloque_elegido = selected[0], tema_elegido = selected[1], temaAbuscar = selected[1].substring(1,3);
+        accion = comando;
+        if (accion_anterior == '' | accion == accion_anterior){
+            accion_anterior = accion;
+            if (bloque_anterior == '' | bloque_elegido == bloque_anterior){
+                if (bloque_elegido.toLowerCase() == command[3].substring(1,command[3].length )|| bloque_elegido.toLowerCase() == command[4].substring(1,command[4].length ) //b2
+                    || bloque_elegido.toLowerCase() == command[5].substring(1,command[5].length ) || bloque_elegido.toLowerCase() == command[6].substring(1,command[6].length ) ){ //b4
+                    bloque_anterior = bloque_elegido;
+                    search_bloque = selected[0].substring(1,2);
+                    if( funciones.findTemas(tema_elegido) ){
+                        temaAbuscar = tema_elegido.substring(1, 3);
+                        console.log(" blocXtema -> tema a buscar: "+temaAbuscar);
+                        db.collection(coleccion_preguntas).find({$and:[{ "bloque" : selected[0] },{ "tema" : temaAbuscar } ]}).toArray((err, results) => { // consulta bloque y tema
+                            if (err) { log.error(err, { scope: 'find bloque '+selected[0]+" and tema "+selected[1]+" "+coleccion_preguntas } ); }
+                            results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
+                                preguntasTema.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
+                            });
+                            if( !validaciones.arrayVacio(preguntasTema, "preguntasTema") ){
+                                preguntasTema = funciones.shuffle(preguntasTema);
+                                let m_datos = funciones.getDatosPregunta(preguntasTema), response = funciones.getResponse(m_datos);
+                                datos = funciones.getDatos(datos, m_datos);
+                                preg = funciones.getDatosPreg(preg, m_datos);
+                                bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
+                            } else { log.error(error_cargar_array+" tema.", { scope: comando } ) }
+                        });
+                    } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[3]); }
+                } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[3]); }
+            } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" bloque."); }
+        } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" año, bloque o tema o sino al quiz."); }
+    } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" año, bloque o tema o sino al quiz."); }
 });
 // test por bloque
 bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
@@ -120,7 +200,8 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
 // Listener (handler) for callback data from /quiz or /b1 or /2015 command
 bot.on('callback_query', (callbackQuery) => {
     if( callbackQuery.data == '') { bot.sendMessage(callbackQuery.message.chat.id, "No has respondido a la pregunta"); }
-    else if( callbackQuery.data != '') { bot.sendMessage(callbackQuery.message.chat.id, oper.callbackQuery(callbackQuery.message, callbackQuery.data, datos_score, datos, accion), { parse_mode: "Markdown" }).then(() => { db_operations.insertRespUser(oper.createCallbackObject(callbackQuery.message, callbackQuery.data, accion, preg, datos, funciones.tipoRespuesta(datos[1], callbackQuery.data)) ); }); }
+    else if( callbackQuery.data != '') { let langElegido = ''; let arrayIdiomas = listas.listIdiomas(); let idioma = { "es" : "Español", "en" : "Inglés", "fr": "Francés", "pt" : "Portugués" }; if( callbackQuery.data == arrayIdiomas[0] || callbackQuery.data == arrayIdiomas[1] || callbackQuery.data == arrayIdiomas[2] || callbackQuery.data == arrayIdiomas[3] ){ idiomaElegido = callbackQuery.data;  if( arrayIdiomas[0] == callbackQuery.data ){ langElegido = idioma[arrayIdiomas[0]]; } if( arrayIdiomas[1] == callbackQuery.data ){ langElegido = idioma[arrayIdiomas[1]]; } if( arrayIdiomas[2] == callbackQuery.data ){ langElegido = idioma[arrayIdiomas[2]]; } if( arrayIdiomas[3] == callbackQuery.data ){ langElegido = idioma[arrayIdiomas[3]]; } bot.sendMessage(callbackQuery.message.chat.id, "Has elegido el idioma "+langElegido ); }
+        bot.sendMessage(callbackQuery.message.chat.id, oper.callbackQuery(callbackQuery.message, callbackQuery.data, datos_score, datos, accion), { parse_mode: "Markdown" }).then(() => { db_operations.insertRespUser(oper.createCallbackObject(callbackQuery.message, callbackQuery.data, accion, preg, datos, funciones.tipoRespuesta(datos[1], callbackQuery.data)) ); }); }
 });
 // test
 bot.onText(/^\/test/, function(msg) { 
@@ -273,7 +354,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
         db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor } ]}).toArray((err, results) => { // consulta autor
             if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
+                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor, obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
                 questPersonalized.push(preg);
             });
             if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
@@ -302,7 +383,7 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
         db.collection(coleccion_preguntas).find({ "autor" : search_autor }).toArray((err, results) => { // consulta autor
             if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
+                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor, obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
                 questPersonalized.push(preg);
                 
             });
@@ -318,8 +399,12 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
 });
 // stop
 bot.onText(/^\/stop/, (msg) => {
-    if( oper.commandStop(msg, datos_score, accion, search_autor).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor), { parse_mode: "Markdown" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = '', bloque_search=''; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
-    else { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor)); }
+    console.log("stop -> tema a buscar: "+temaAbuscar);
+    if( oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar), { parse_mode: "Markdown" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = '', bloque_search=''; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
+    else { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar)); }
+});
+bot.onText(/^\/langWiki/, function onLangWiki(msg) {
+    bot.sendMessage(msg.chat.id, oper.commandLangWiki(msg)+"¿Qué idioma quieres elegir para buscar en la Wiki?", { reply_markup: listas.getKeyboardIdioma() });
 });
 // wiki [whatever]
 bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
@@ -331,7 +416,7 @@ bot.onText(/^\/searches/, (msg) => {
     const nombreFichero = "searches.pdf";
     /*
     var contenido = `<h1>Esto es un test de html-pdf</h1><p>Estoy generando PDF a partir de este código HTML sencillo</p>`;
-    pdf.create(contenido).toFile(nombreFichero, function(err, res) {
+    pdf.create(contenido).toFile(externalUrl+":443/bot"+token+"/"+nombreFichero, function(err, res) {
         if (err){
             console.log(err);
         } else {

@@ -70,16 +70,22 @@ module.exports = {
     },
 
     commandTestInap: function(msg){
-        logs.logTest(msg);
+        logs.logTestInap(msg);
         let response = "Has elegido realizar un test de INAP. "+HANDS+" \n" 
         return response;   
     },
 
-    commandStop: function(msg, datos_score, accion, search_autor){
+    commandTema: function(msg){
+        logs.logTestTema(msg);
+        let response = "Has elegido realizar un test personalizado por tema. "+HANDS+" \n" 
+        return response;
+    },
+
+    commandStop: function(msg, datos_score, accion, search_autor, search_bloque, search_tema){
         logs.logStop(msg);
         let response = '';
         let contador = 0;
-
+        console.log("commandStop -> search_tema: "+search_tema);
         if( datos_score[0] > 0 || datos_score[1] > 0 ){
             contador = datos_score[0]+datos_score[1];
             if (  accion == command[3] | accion == command[4] | accion == command[5] | accion == command[6]  ){ //bloques
@@ -95,6 +101,9 @@ module.exports = {
                     | accion == command[19] | accion == command[20] | accion == command[21] | accion == command[22]
                     | accion == command[23] | accion == command[24] ){ //test personalizados
                 response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n"
+            }
+            else if ( accion == command[26]) {// blocXtema
+                response = "De las *"+contador.toString()+"* preguntas del *bloque "+search_bloque+" y tema "+search_tema+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n"
             }
             else
                 response = "De las *"+contador.toString()+"* preguntas.\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n"
@@ -118,8 +127,7 @@ module.exports = {
         return doc;
     },
 
-   commandWiki: function(msg, search){
-       
+    commandWiki: function(msg, search){
         logs.logWiki(msg);
         let response = ''; let lang = msg.from.language_code;
         console.log("language code: "+lang);
@@ -152,6 +160,12 @@ module.exports = {
         }
 
         return response;
+    },
+
+    commandLangWiki: function(msg){
+        logs.logWiki(msg);
+        let response = "Has elegido realizar una búsqueda en la wikipedia.\n" 
+        return response;   
     },
 
     createSearchObject: function(msg, response){

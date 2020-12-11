@@ -72,6 +72,13 @@ module.exports = {
         funciones.writeFile(file_log, log_info);
     },
 
+    logTestTema: function(msg){
+        console.log("Comando "+command[25])
+        const log_info = `El comando `+command[25]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`
+        log.info(log_info, { scope: command[25] });
+        funciones.writeFile(file_log, log_info);
+    },
+
     logTestEmilio: function(msg){
         console.log("Comando "+command[16])
         const log_info = `El comando `+command[16]+` ha recibido el dato del chat: \n{\nid: ${msg.chat.id}\ntype: ${msg.chat.type}\nusername: ${msg.chat.username}\nfirst_name: ${msg.chat.first_name}\n}\n`

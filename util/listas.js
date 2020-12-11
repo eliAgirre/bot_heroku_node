@@ -21,7 +21,8 @@ module.exports = {
             '2018'        : 'Test 2018 INAP',
             'test'        : 'Test personalizado.',
             'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
-            'wiki'        : 'Busca información en la wikipedia en castellano.'
+            'wiki'        : 'Busca información en la wikipedia en castellano.',
+            'tema'        : 'Test por tema.'
         }
         
         return commands;
@@ -54,7 +55,8 @@ module.exports = {
             'opositatest' : 'Test del OpositaTest personalido.',
             'daypo'       : 'Test del Daypo personalido.',
             'preparatic'  : 'Test del Daypo personalido.',
-            'opostestic'  : 'Test del OposTestTic personalido.'
+            'opostestic'  : 'Test del OposTestTic personalido.',
+            'tema'        : 'Test del tema.'
         }
         
         return commands;
@@ -97,7 +99,14 @@ module.exports = {
 
         return years;
     },
-    
+
+    listTemas: function(){
+
+        const temas = ["T01","T02","T03","T04","T05","T06","T07","T08","T09","T10","T11"];
+
+        return temas;
+    },
+
     listIdiomas: function(){
 
         const idioma = ["es","en","fr","pt","eu","ca","gl","an","ast"];
@@ -170,7 +179,9 @@ module.exports = {
                                 "/opositatest",//21
                                 "/daypo",      //22
                                 "/preparatic", //23
-                                "/opostestic" //24
+                                "/opostestic", //24
+                                "/tema",       //25
+                                "/blocXtema"   //26
                             ];
 
         return array_commands;
@@ -243,6 +254,35 @@ module.exports = {
         return keyboard_years;
     },
 
+    getTestKeyboardTemas: function(){
+
+        let columnas = 3;
+        let temas = this.listTemas();
+        let temasXfila = [];
+        let keyboard = [];
+        let keyboard_temas = {};
+
+        for(var i=0; i<=temas.length; i++){
+            if (temas[i] !== undefined){
+                temasXfila.push(temas[i]);
+            }
+            if( i > 0){
+                if( (i+1) % columnas == 0){
+                    keyboard.push(temasXfila);
+                    temasXfila = [];
+                }
+            }
+        }
+
+        keyboard_temas  =   {
+                            "reply_markup": { //"keyboard": [this.listYears()],
+                                "keyboard": keyboard,
+                                "one_time_keyboard": true
+                            }}
+
+        return keyboard_temas;
+    },
+
     getTestKeyboardPromocion: function(){
 
         let keyboard_promocion = { "reply_markup": { "keyboard": [this.listPromociones()], "one_time_keyboard": true } };
@@ -269,13 +309,13 @@ module.exports = {
     },
 
     getKeyboardIdioma: function(){
-
+        
         const ES = 'es'
         const EN = 'en'
         const FR = 'fr'
         const PT = 'pt'
 
-        keyboard = {"inline_keyboard": 
+        keyboard_idioma = {"inline_keyboard": 
                         [[
                             {
                                 "text": 'Español',
@@ -295,7 +335,9 @@ module.exports = {
                             }
                         ]]
                     }
+        
+        //let keyboard_idioma = { "reply_markup": { "keyboard": [this.listIdiomas()], "one_time_keyboard": true } };
 
-        return keyboard;
+        return keyboard_idioma;
     }
 }
