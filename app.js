@@ -62,7 +62,8 @@ bot.onText(/^\/quiz/, (msg) => {
 // test por tema
 bot.onText(/^\/tema/, function(msg) {
     let textoBloque='', textoTema = '', response = '';
-    let cont=-1, konta = -1;
+    let cont= 0, konta = 0, zenbat = 0;
+    selected[0] = '', selected[1] = '';
     let comando = msg.text.toString();
     accion = comando;
     //bot.sendMessage(msg.chat.id,  oper.commandBloque(msg)+"¿Qué bloque quieres?", listas.getTestKeyboardBloques());
@@ -76,29 +77,30 @@ bot.onText(/^\/tema/, function(msg) {
                 bloque_elegido = funciones.textIncluyeArray(textoBloque, bloques, "listBloques" );
                 bloque_anterior = bloque_elegido;
                 selected[0]=bloque_elegido;
-                bot.sendMessage(msg.chat.id, oper.commandTema(msg)+"¿Qué tema quieres elegir?", listas.getTestKeyboardTemas());
-                cont++;
-                bot.onText(/T01|T02|T03|T04|T04|T05|T06|T07|T08|T09|T10|T11/, (msg) => {
-                    textoTema = msg.text;
-                    if( funciones.findTemas(textoTema) ){
-                        let tema = listas.listTemas();
-                        response = 'Has elegido realizar el test de *';
-                        tema_elegido = funciones.textIncluyeArray(textoTema, tema, "listTemas" );
-                        tema_anterior = tema_elegido;
-                        selected[1]=tema_elegido;
-                        for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]);
-                            response += selected[i]+" ";
+                if( zenbat < 1 ){
+                    zenbat++;
+                    bot.sendMessage(msg.chat.id, oper.commandTema(msg)+"¿Qué tema quieres elegir?", listas.getTestKeyboardTemas());
+                    bot.onText(/T01|T02|T03|T04|T04|T05|T06|T07|T08|T09|T10|T11/, (msg) => {
+                        textoTema = msg.text;
+                        if( funciones.findTemas(textoTema) ){
+                            let tema = listas.listTemas();
+                            response = 'Has elegido realizar el test de *';
+                            tema_elegido = funciones.textIncluyeArray(textoTema, tema, "listTemas" );
+                            tema_anterior = tema_elegido;
+                            selected[1]=tema_elegido;
+                            for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]);
+                                response += selected[i]+" ";
+                            }
                         }
-                    }
-                    if( cont < 1 ){
-                        bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
-                        bot.sendMessage(msg.chat.id, "\nPulsa "+command[26], listas.getTestKeyboardBlank() ).then(() => {
-                            textoBloque = '', textoTema = '';
-                        });
-                        cont++;
-                    }
-                });
-
+                        if( cont < 1 ){
+                            bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
+                            bot.sendMessage(msg.chat.id, "\nPulsa "+command[26], listas.getTestKeyboardBlank() ).then(() => {
+                                textoBloque = '', textoTema = '';
+                            });
+                            cont++;
+                        }
+                    });
+                }
             }
         });
     }
@@ -107,8 +109,8 @@ bot.onText(/^\/tema/, function(msg) {
 bot.onText(/^\/blocXtema/, function(msg) {
     logs.logTestTema(msg);
     let db = clientMongo.getDb(), comando = msg.text.toString(), bloque_elegido = '', tema_elegido = '';
-    if( selected[0] != '' || selected[1] != '' ){
-        bloque_elegido = selected[0], tema_elegido = selected[1], temaAbuscar = selected[1].substring(1,3);
+    if( selected[0] != undefined || selected[1] != undefined ){
+        bloque_elegido = selected[0], tema_elegido = selected[1];
         accion = comando;
         if (accion_anterior == '' | accion == accion_anterior){
             accion_anterior = accion;
@@ -131,7 +133,7 @@ bot.onText(/^\/blocXtema/, function(msg) {
                                 datos = funciones.getDatos(datos, m_datos);
                                 preg = funciones.getDatosPreg(preg, m_datos);
                                 bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
-                            } else { log.error(error_cargar_array+" tema.", { scope: comando } ) }
+                            } else { bot.sendMessage(msg.chat.id, 'No hay preguntas para el *bloque '+search_bloque+" y tema "+temaAbuscar+'*.\nPara elegir otro pulsa '+command[25]+".\nMuchas gracias.", { parse_mode: "Markdown" } ); log.error(error_cargar_array+" tema.", { scope: comando } ) }
                         });
                     } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[3]); }
                 } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[3]); }
@@ -400,7 +402,7 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
 // stop
 bot.onText(/^\/stop/, (msg) => {
     console.log("stop -> tema a buscar: "+temaAbuscar);
-    if( oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar), { parse_mode: "Markdown" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = '', bloque_search=''; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
+    if( oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar), { parse_mode: "Markdown" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = '', bloque_search='', search_bloque = '', temaAbuscar = ''; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
     else { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar)); }
 });
 bot.onText(/^\/langWiki/, function onLangWiki(msg) {
