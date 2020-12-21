@@ -110,7 +110,7 @@ module.exports = {
                 response = "De las *"+contador.toString()+"* preguntas.\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
         }
         else{
-            accion = command[2]+", "+command[3]+", "+command[4]+", "+command[5]+", "+command[6]+", "+command[8]+", "+command[9]+", "+command[10]+" o "+command[14];
+            accion = command[2]+", "+command[3]+", "+command[4]+", "+command[5]+", "+command[6]+", "+command[8]+", "+command[9]+", "+command[10]+", "+command[25]+" o "+command[14];
             response = "No hay puntuación "+SAD+"\nNo has respondido o has terminado.\n\n";
             response += "Empezar el test "+ARROW+" "+accion+" y después elegir alguna opción.";
         }
