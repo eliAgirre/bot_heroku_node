@@ -88,26 +88,26 @@ module.exports = {
         console.log("commandStop -> search_tema: "+search_tema);
         if( datos_score[0] > 0 || datos_score[1] > 0 ){
             contador = datos_score[0]+datos_score[1];
-            porcentaje = datos_score[0] * 100 / contador;
+            porcentaje = (datos_score[0] * 100 / contador).toFixed(2);
             if (  accion == command[3] | accion == command[4] | accion == command[5] | accion == command[6]  ){ //bloques
     
                 let b = accion.substring(accion.length-1);
-                response = "De las *"+contador.toString()+"* preguntas del *bloque "+b+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\nCon el porcentaje: "+porcentaje.toString()+".\n"
+                response = "De las *"+contador.toString()+"* preguntas del *bloque "+b+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
             }
             else if ( accion == command[7] | accion == command[8] | accion == command[9] | accion == command[10] | accion == command[11] ){ //years
                 let anio = accion.substring(1,accion.length);
-                response = "De las *"+contador.toString()+"* preguntas del *año "+anio+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\nCon el porcentaje: "+porcentaje.toString()+".\n"
+                response = "De las *"+contador.toString()+"* preguntas del *año "+anio+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
             }
             else if ( accion == command[15] | accion == command[16] | accion == command[17] | accion == command[18] 
                     | accion == command[19] | accion == command[20] | accion == command[21] | accion == command[22]
                     | accion == command[23] | accion == command[24] ){ //test personalizados
-                response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\nCon el porcentaje: "+porcentaje.toString()+".\n"
+                response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
             }
             else if ( accion == command[26]) {// blocXtema
-                response = "De las *"+contador.toString()+"* preguntas del *bloque "+search_bloque+" y tema "+search_tema+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\nCon el porcentaje: "+porcentaje.toString()+".\n"
+                response = "De las *"+contador.toString()+"* preguntas del *bloque "+search_bloque+" y tema "+search_tema+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
             }
             else
-                response = "De las *"+contador.toString()+"* preguntas.\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\nCon el porcentaje: "+porcentaje.toString()+".\n"
+                response = "De las *"+contador.toString()+"* preguntas.\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
         }
         else{
             accion = command[2]+", "+command[3]+", "+command[4]+", "+command[5]+", "+command[6]+", "+command[8]+", "+command[9]+", "+command[10]+" o "+command[14];
