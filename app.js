@@ -49,7 +49,7 @@ bot.onText(/^\/quiz/, (msg) => {
         db.collection(coleccion_preguntas).find().toArray((err, results) => { // consulta preguntas
             if (err) { log.error(err, { scope: 'find '+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                db_questions.push(new model_pregunta(obj.bloque, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
+            db_questions.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
             });
             db_questions = funciones.shuffle(db_questions); // random preguntas
             let m_datos = funciones.getDatosPregunta(db_questions), response = funciones.getResponse(m_datos);
