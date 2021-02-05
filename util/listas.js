@@ -56,7 +56,8 @@ module.exports = {
             'daypo'       : 'Test del Daypo personalido.',
             'preparatic'  : 'Test del Daypo personalido.',
             'opostestic'  : 'Test del OposTestTic personalido.',
-            'tema'        : 'Test del tema.'
+            'tema'        : 'Test del tema.',
+            'opolex'      : 'Test del Opolex personalido.',
         }
         
         return commands;
@@ -72,7 +73,8 @@ module.exports = {
                         "OpositaTest",  //5
                         "Daypo",        //6
                         "PreparaTic",   //7
-                        "OposTestTic"   //8
+                        "Opolex",       //8
+                        "OposTestTic"   //9
                         ];
 
         return autores;
@@ -181,7 +183,8 @@ module.exports = {
                                 "/preparatic", //23
                                 "/opostestic", //24
                                 "/tema",       //25
-                                "/blocXtema"   //26
+                                "/blocXtema",   //26
+                                "/opolex"       //27
                             ];
 
         return array_commands;
