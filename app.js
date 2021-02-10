@@ -36,7 +36,7 @@ const error_no_bien_elegido = "No se ha elegido bien.\nPara ello debe escribir e
 const error_cambio_comando = "Para cambiar de test "+ARROW+" "+command[12]+" y después el comando correspondiente al";
 // variables globales- ------ var array = funciones.readFile(file_preguntas); var preguntas = funciones.getPreguntas(array);
 var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [], selected = [], preguntasTema = [];
-var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '', search_autor = '', bloque_search = '', autor = '', tema_elegido = '', temaAbuscar = '', search_bloque = '';
+var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '', search_autor = '', bloque_search = '', tema_search='', autor = '', tema_elegido = '', temaAbuscar = '', search_bloque = '';
 // comaandos
 bot.onText(/^\/start/, (msg) => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = ''; idiomaElegido = msg.from.language_code; bot.sendMessage(msg.chat.id, oper.commandStart(msg), listas.getTestKeyboardBlank()); });
 // help
@@ -209,7 +209,7 @@ bot.on('callback_query', (callbackQuery) => {
 bot.onText(/^\/test/, function(msg) { 
     let cid = msg.chat.id;
     let textoAutor = '', textoYear = '', textoPromo = '', textoBloque = '';
-    let i=0, i1=0, i2=0, ea=0, ea1=0, g=0;
+    let i=0, i1=0, i2=0, ea=0, ea1=0, ea2=0, ea3=0, g=0;
     bot.sendMessage(cid,  oper.commandTest(msg)+"¿Qué autor quieres elegir para hacer el test?", listas.getTestKeyboardAutores());
     //bot.onText(/.+/g, function(msg, match) {
     bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens|OpositaTest|Daypo|PreparaTic|OposTestTic|Opolex/, (msg) => {
@@ -267,21 +267,61 @@ bot.onText(/^\/test/, function(msg) {
                             let bloque = listas.listBloques();
                             let bloqueElegido = funciones.textIncluyeArray(textoBloque, bloque, "listBloques" );
                             selected[1]=bloqueElegido;
-                            response += selected[0]+" "+selected[1];
                             //console.log("Autor: "+autorElegido);
                             if( ea1 < 1 ){
-                                bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
-                                if( autorElegido === autor[1]) com = command[16];
-                                else if( autorElegido === autor[2]) com = command[17];
-                                else if( autorElegido === autor[5]) com = command[21];
-                                else if( autorElegido === autor[6]) com = command[22];
-                                else if( autorElegido === autor[7]) com = command[23];
-                                else if( autorElegido === autor[8]) com = command[27];
-                                else if( autorElegido === autor[9]) com = command[24];
-                                bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() ).then(() => {
-                                    textoAutor = '', textoBloque = '';
-                                });
+                                bot.sendMessage(msg.chat.id, "¿Quieres elegir un tema?", listas.getTestKeyboardSiNo() );
                                 ea1++;
+                                bot.onText(/SI|NO/, (msg) => {
+                                    textoSINO = msg.text;
+                                    if( ea2 < 1 ){
+                                        if( textoSINO === 'SI'){ // con tema
+                                            bot.sendMessage(msg.chat.id, oper.commandTema(msg)+"¿Qué tema quieres elegir?", listas.getTestKeyboardTemas());
+                                            bot.onText(/T01|T02|T03|T04|T04|T05|T06|T07|T08|T09|T10|T11/, (msg) => {
+                                                textoTema = msg.text;
+                                                if( funciones.findTemas(textoTema) ){
+                                                    let tema = listas.listTemas();
+                                                    response = 'Has elegido realizar el test de *';
+                                                    tema_elegido = funciones.textIncluyeArray(textoTema, tema, "listTemas" );
+                                                    tema_anterior = tema_elegido;
+                                                    selected[2]=tema_elegido;
+                                                    for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]);
+                                                        response += selected[i]+" ";
+                                                    }
+                                                }
+                                                if( ea3 < 1 ){
+                                                    bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
+                                                    if( autorElegido === autor[1]) com = command[16];
+                                                    else if( autorElegido === autor[2]) com = command[17];
+                                                    else if( autorElegido === autor[5]) com = command[21];
+                                                    else if( autorElegido === autor[6]) com = command[22];
+                                                    else if( autorElegido === autor[7]) com = command[23];
+                                                    else if( autorElegido === autor[8]) com = command[27];
+                                                    else if( autorElegido === autor[9]) com = command[24];
+                                                    bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() ).then(() => {
+                                                        textoAutor = '', textoBloque = '', textoTema = '';
+                                                    });
+                                                    ea3++;
+                                                }
+                                            });
+
+                                        }
+                                        else if( textoSINO === 'NO'){ //sin tema
+                                            response += selected[0]+" "+selected[1]; selected[2]=undefined;
+                                            bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
+                                            if( autorElegido === autor[1]) com = command[16];
+                                            else if( autorElegido === autor[2]) com = command[17];
+                                            else if( autorElegido === autor[5]) com = command[21];
+                                            else if( autorElegido === autor[6]) com = command[22];
+                                            else if( autorElegido === autor[7]) com = command[23];
+                                            else if( autorElegido === autor[8]) com = command[27];
+                                            else if( autorElegido === autor[9]) com = command[24];
+                                            bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() ).then(() => {
+                                                textoAutor = '', textoBloque = '';
+                                            });
+                                        }
+                                        ea2++;
+                                    }
+                                });                                
                             }
                         }
                     });
@@ -346,7 +386,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
     else if( comando == command[27] ){ logs.logTestOpolex(msg); }
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
-        accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); }
+        accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected0: "+selected[0]); console.log("selected1: "+selected[1]); console.log("selected 2: "+selected[2]); }
         if( search_autor === '' ){
             if( comando == command[16] ){ search_autor = "Emilio del bloque "+selected[1]; autor = "Emilio"; }
             else if( comando == command[17] ){ search_autor = "Adams del bloque "+selected[1]; autor = "Adams"; }
@@ -356,22 +396,46 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
             else if( comando == command[24] ){ search_autor = "OposTestTic del bloque "+selected[1]; autor = "OposTestTic"; }
             else if( comando == command[27] ){ search_autor = "Opolex del bloque "+selected[1]; autor = "Opolex"; }
             bloque_search = selected[1];
+            if(selected[2] === undefined){
+                temaAbuscar = ''; 
+            }
+            else if(selected[2] !== undefined){
+                temaAbuscar = selected[2].substring(1, selected[2].length );//console.log("temaAbuscar: "+temaAbuscar);
+            }
             selected = [];
         }
-        db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor } ]}).toArray((err, results) => { // consulta autor
-            if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
-            results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor, obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
-                questPersonalized.push(preg);
+        if(selected[2] === undefined){
+            db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor } ]}).toArray((err, results) => { // consulta autor
+                if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
+                results.forEach(function(objeto) { //console.log("objeto: "+ JSON.stringify(objeto));
+                    let pregs = new model_pregunta(objeto.bloque, objeto.tema, objeto.autor, objeto.enunciado, objeto.opcion_a, objeto.opcion_b, objeto.opcion_c, objeto.opcion_d, objeto.resp_correcta); //pregs.showPregunta()
+                    questPersonalized.push(pregs);
+                });
+                if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
+                    questPersonalized = funciones.shuffle(questPersonalized);
+                    let mod_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(mod_datos);
+                    datos = funciones.getDatos(datos, mod_datos);
+                    preg = funciones.getDatosPreg(preg, mod_datos);
+                    bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
+                } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
             });
-            if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
-                questPersonalized = funciones.shuffle(questPersonalized);
-                let m_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(m_datos);
-                datos = funciones.getDatos(datos, m_datos);
-                preg = funciones.getDatosPreg(preg, m_datos);
-                bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
-            } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
-        });
+        }
+        else if(selected[2] !== undefined){
+            db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor }, {"tema": temaAbuscar} ]}).toArray((err, results) => { // consulta autor
+                if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
+                results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
+                    let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor, obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
+                    questPersonalized.push(preg);
+                });
+                if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
+                    questPersonalized = funciones.shuffle(questPersonalized);
+                    let m_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(m_datos);
+                    datos = funciones.getDatos(datos, m_datos);
+                    preg = funciones.getDatosPreg(preg, m_datos);
+                    bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
+                } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
+            });
+        }
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
 });
 // test gokoan u oposapiens

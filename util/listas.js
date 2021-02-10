@@ -102,6 +102,13 @@ module.exports = {
         return years;
     },
 
+    listSiNo: function(){
+
+        const bloques = ["SI","NO"];
+
+        return bloques;
+    },
+
     listTemas: function(){
 
         const temas = ["T01","T02","T03","T04","T05","T06","T07","T08","T09","T10","T11"];
@@ -226,6 +233,13 @@ module.exports = {
         let keyboard_bloques = { "reply_markup": { "keyboard": [this.listBloques()], "one_time_keyboard": true } };
 
         return keyboard_bloques;
+    },
+
+    getTestKeyboardSiNo: function(){
+
+        let keyboard_si_no = { "reply_markup": { "keyboard": [this.listSiNo()], "one_time_keyboard": true } };
+
+        return keyboard_si_no;
     },
 
     getTestKeyboardYears: function(){
