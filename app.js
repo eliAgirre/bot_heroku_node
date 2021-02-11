@@ -397,14 +397,14 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
             else if( comando == command[27] ){ search_autor = "Opolex del bloque "+selected[1]; autor = "Opolex"; }
             bloque_search = selected[1];
             if(selected[2] === undefined){
-                temaAbuscar = ''; 
+                temaAbuscar = undefined; 
             }
             else if(selected[2] !== undefined){
                 temaAbuscar = selected[2].substring(1, selected[2].length );//console.log("temaAbuscar: "+temaAbuscar);
             }
             selected = [];
         }
-        if(selected[2] === undefined){
+        if( temaAbuscar === undefined){
             db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor } ]}).toArray((err, results) => { // consulta autor
                 if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
                 results.forEach(function(objeto) { //console.log("objeto: "+ JSON.stringify(objeto));
@@ -420,7 +420,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
                 } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
             });
         }
-        else if(selected[2] !== undefined){
+        else if( temaAbuscar !== undefined){
             db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor }, {"tema": temaAbuscar} ]}).toArray((err, results) => { // consulta autor
                 if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
                 results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
@@ -471,7 +471,7 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
 // stop
 bot.onText(/^\/stop/, (msg) => {
     console.log("stop -> tema a buscar: "+temaAbuscar);
-    if( oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar), { parse_mode: "Markdown" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = '', bloque_search='', search_bloque = '', temaAbuscar = ''; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
+    if( oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar), { parse_mode: "Markdown" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = '', bloque_search='', search_bloque = '', temaAbuscar = '', preg=[]; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
     else { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar)); }
 });
 bot.onText(/^\/langWiki/, function onLangWiki(msg) {

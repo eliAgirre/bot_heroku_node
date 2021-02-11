@@ -101,7 +101,7 @@ module.exports = {
             else if ( accion == command[15] | accion == command[16] | accion == command[17] | accion == command[18] 
                     | accion == command[19] | accion == command[20] | accion == command[21] | accion == command[22]
                     | accion == command[23] | accion == command[24] | accion == command[27] ){ //test personalizados
-
+                console.log("search tema"+search_tema)
                 if( search_tema === undefined){
                     response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
                 }
