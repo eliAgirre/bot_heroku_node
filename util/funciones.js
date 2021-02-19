@@ -511,8 +511,8 @@ module.exports = {
 
     getResponse: function(m_datos){
 
-      return response = "* "+m_datos.bloque+"-T"+m_datos.tema+")* "+m_datos.enunciado+"\n "+m_datos.opcion_a+" \n "+m_datos.opcion_b+" \n "+m_datos.opcion_c+" \n "+m_datos.opcion_d+" \n\n De *"+m_datos.autor+"*";
-
+      //return response = "* "+m_datos.bloque+"-T"+m_datos.tema+")* "+m_datos.enunciado+"\n "+m_datos.opcion_a+" \n "+m_datos.opcion_b+" \n "+m_datos.opcion_c+" \n "+m_datos.opcion_d+" \n\n De *"+m_datos.autor+"*";
+      return response = "<b> "+m_datos.bloque+"-T"+m_datos.tema+")</b> "+m_datos.enunciado+"\n\n "+m_datos.opcion_a+" \n "+m_datos.opcion_b+" \n "+m_datos.opcion_c+" \n "+m_datos.opcion_d+" \n\n De <b>"+m_datos.autor+"</b>";
     },
 
     getDatos: function(datos, m_datos){

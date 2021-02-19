@@ -57,7 +57,7 @@ module.exports = {
             'preparatic'  : 'Test del Daypo personalido.',
             'opostestic'  : 'Test del OposTestTic personalido.',
             'tema'        : 'Test del tema.',
-            'opolex'      : 'Test del Opolex personalido.',
+            'opolex'      : 'Test del Opolex personalido.'
         }
         
         return commands;

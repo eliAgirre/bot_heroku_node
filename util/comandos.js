@@ -35,18 +35,18 @@ module.exports = {
     callbackQuery: function(msg, data, datos_score, datos, accion){
         logs.logCallback(msg);
         let user_answer = funciones.getRespuestaUser(data);
-        let response = '';
+        let response = '', emoji = '';
         if( user_answer != ''){
-
+            if( user_answer === datos[1]){ emoji = CHECK; } else { emoji = EQUIS; }
             datos_score = funciones.calcularScore(datos_score, datos[1], user_answer);
-            response += '*Enunciado*: "'+datos[0]+'"\nTu respuesta: *'+user_answer+'*.\n*Respuesta correcta: '+datos[1]+'*\n\n'
-            response += CHECK+" *Correctas*: "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\n";
+            response += '<b>Enunciado</b>: "'+datos[0]+'"\n\nTu respuesta: <b>'+user_answer+'</b>   '+emoji+'\n<b>Respuesta correcta: '+datos[1]+'</b>\n\n'
+            response += CHECK+" <b>Correctas</b>: "+datos_score[0].toString()+".\n"+EQUIS+" <b>Incorrectas</b>: "+datos_score[1].toString()+".\n\n";
             console.log("accion: "+accion);
 
             if( accion === '')
                 accion = command[2]+" o "+command[3]+" o "+command[4]+" o "+command[5]+" o "+command[6]+" o "+command[8]+" o "+command[9]+" o "+command[10];
-            response += REPEAT+" Empezar o *seguir* "+ARROW+" "+accion+".\n"
-            response += STOP+" *Parar* el test "+ARROW+" "+command[12]+"."
+            response += REPEAT+" Empezar o <b>seguir</b> "+ARROW+" "+accion+".\n"
+            response += STOP+" <b>Parar</b> el test "+ARROW+" "+command[12]+"."
         }
 
         return response;
@@ -84,37 +84,46 @@ module.exports = {
     commandStop: function(msg, datos_score, accion, search_autor, search_bloque, search_tema){
         logs.logStop(msg);
         let response = '';
-        let contador = 0, porcentaje = 0;
+        let contador = 0, porcentaje = 0, incorrectos = 0, total = 0;
         console.log("commandStop -> search_tema: "+search_tema);
         if( datos_score[0] > 0 || datos_score[1] > 0 ){
             contador = datos_score[0]+datos_score[1];
-            porcentaje = (datos_score[0] * 100 / contador).toFixed(2);
+            if( datos_score[0] === 0){
+                porcentaje = 0.00;
+            }
+            else{
+                incorrectos = datos_score[1] * 0.33;
+                console.log("incorrectos: "+incorrectos);
+                total = datos_score[0] - incorrectos;
+                console.log("total: "+total);
+                porcentaje = (total * 100 / contador).toFixed(2);
+            }
             if (  accion == command[3] | accion == command[4] | accion == command[5] | accion == command[6]  ){ //bloques
     
                 let b = accion.substring(accion.length-1);
-                response = "De las *"+contador.toString()+"* preguntas del *bloque "+b+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
+                response = "De las <b>"+contador.toString()+"</b> preguntas del <b>bloque "+b+"</b>:\n\n"+CHECK+" <b>Correctas</b> : "+datos_score[0].toString()+".\n"+EQUIS+" <b>Incorrectas</b>: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
             }
             else if ( accion == command[7] | accion == command[8] | accion == command[9] | accion == command[10] | accion == command[11] ){ //years
                 let anio = accion.substring(1,accion.length);
-                response = "De las *"+contador.toString()+"* preguntas del *año "+anio+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
+                response = "De las <b>"+contador.toString()+"</b> preguntas del <b>año "+anio+"</b>:\n\n"+CHECK+" <b>Correctas</b> : "+datos_score[0].toString()+".\n"+EQUIS+" <b>Incorrectas</b>: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
             }
             else if ( accion == command[15] | accion == command[16] | accion == command[17] | accion == command[18] 
                     | accion == command[19] | accion == command[20] | accion == command[21] | accion == command[22]
                     | accion == command[23] | accion == command[24] | accion == command[27] ){ //test personalizados
                 console.log("search tema"+search_tema)
                 if( search_tema === undefined){
-                    response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
+                    response = "De las <b>"+contador.toString()+"</b> preguntas del <b>autor "+search_autor+"</b>:\n\n"+CHECK+" <b>Correctas</b> : "+datos_score[0].toString()+".\n"+EQUIS+" <b>Incorrectas</b>: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
                 }
                 else if( search_tema !== undefined){
-                    response = "De las *"+contador.toString()+"* preguntas del *autor "+search_autor+" y tema "+search_tema+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
+                    response = "De las <b>"+contador.toString()+"</b> preguntas del <b>autor "+search_autor+" y tema "+search_tema+"</b>:\n\n"+CHECK+" <b>Correctas</b> : "+datos_score[0].toString()+".\n"+EQUIS+" <b>Incorrectas</b>: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
                 }
                 
             }
             else if ( accion == command[26]) {// blocXtema
-                response = "De las *"+contador.toString()+"* preguntas del *bloque "+search_bloque+" y tema "+search_tema+"*:\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
+                response = "De las <b>"+contador.toString()+"</b> preguntas del <b>bloque "+search_bloque+" y tema "+search_tema+"</b>:\n\n"+CHECK+" <b>Correctas</b> : "+datos_score[0].toString()+".\n"+EQUIS+" <b>Incorrectas</b>: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
             }
             else
-                response = "De las *"+contador.toString()+"* preguntas.\n\n"+CHECK+" *Correctas* : "+datos_score[0].toString()+".\n"+EQUIS+" *Incorrectas*: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
+                response = "De las <b>"+contador.toString()+"</b> preguntas.\n\n"+CHECK+" <b>Correctas</b> : "+datos_score[0].toString()+".\n"+EQUIS+" <b>Incorrectas</b>: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
         }
         else{
             accion = command[2]+", "+command[3]+", "+command[4]+", "+command[5]+", "+command[6]+", "+command[8]+", "+command[9]+", "+command[10]+", "+command[25]+" o "+command[14];
@@ -186,7 +195,7 @@ module.exports = {
         return doc;
     },
 
-    commandDefault: function(msg){
+    commandDefault: function(msg, selected){
         logs.logDefault(msg);
         let response = '';
         if( msg.text !== undefined){
@@ -202,6 +211,8 @@ module.exports = {
             console.log("comando: "+comando);
             console.log("comando wiki: "+comando_wiki);
             console.log("search: "+search);
+            if(selected !== undefined)
+                for(var i=0;i<selected.length;i++){ console.log("selected "+i+": "+selected[i]); }
 
             if ( !funciones.findCommnad(comando) & !funciones.findCommnad(comando_wiki) & comando === 'https:' ){ // si no es ningun comando
 

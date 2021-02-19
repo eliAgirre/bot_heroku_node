@@ -55,7 +55,7 @@ bot.onText(/^\/quiz/, (msg) => {
             let m_datos = funciones.getDatosPregunta(db_questions), response = funciones.getResponse(m_datos);
             datos = funciones.getDatos(datos, m_datos);
             preg = funciones.getDatosPreg(preg, m_datos);
-            bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
+            bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz."); }
 });
@@ -65,7 +65,7 @@ bot.onText(/^\/tema/, function(msg) {
     let cont= 0, konta = 0, zenbat = 0;
     selected[0] = '', selected[1] = '';
     let comando = msg.text.toString();
-    accion = comando;
+    accion = comando;'Has elegido realizar el test de <b>'
     //bot.sendMessage(msg.chat.id,  oper.commandBloque(msg)+"¿Qué bloque quieres?", listas.getTestKeyboardBloques());
     if( konta < 1 ){
         konta++;
@@ -84,16 +84,18 @@ bot.onText(/^\/tema/, function(msg) {
                         textoTema = msg.text;
                         if( funciones.findTemas(textoTema) ){
                             let tema = listas.listTemas();
-                            response = 'Has elegido realizar el test de *';
+                            response = 'Has elegido realizar el test de <b>';
                             tema_elegido = funciones.textIncluyeArray(textoTema, tema, "listTemas" );
                             tema_anterior = tema_elegido;
-                            selected[1]=tema_elegido;
+                            selected[1]=tema_elegido; 
+                            response += selected[0]+" ";
+                            response += selected[1]+" ";/*
                             for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]);
                                 response += selected[i]+" ";
-                            }
+                            }*/
                         }
                         if( cont < 1 ){
-                            bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
+                            bot.sendMessage(msg.chat.id, response+"</b>", { parse_mode: "HTML" } );
                             bot.sendMessage(msg.chat.id, "\nPulsa "+command[26], listas.getTestKeyboardBlank() ).then(() => {
                                 textoBloque = '', textoTema = '';
                             });
@@ -132,8 +134,8 @@ bot.onText(/^\/blocXtema/, function(msg) {
                                 let m_datos = funciones.getDatosPregunta(preguntasTema), response = funciones.getResponse(m_datos);
                                 datos = funciones.getDatos(datos, m_datos);
                                 preg = funciones.getDatosPreg(preg, m_datos);
-                                bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
-                            } else { bot.sendMessage(msg.chat.id, 'No hay preguntas para el *bloque '+search_bloque+" y tema "+temaAbuscar+'*.\nPara elegir otro pulsa '+command[25]+".\nMuchas gracias.", { parse_mode: "Markdown" } ); log.error(error_cargar_array+" tema.", { scope: comando } ) }
+                                bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
+                            } else { bot.sendMessage(msg.chat.id, 'No hay preguntas para el *bloque '+search_bloque+" y tema "+temaAbuscar+'*.\nPara elegir otro pulsa '+command[25]+".\nMuchas gracias.", { parse_mode: "HTML" } ); log.error(error_cargar_array+" tema.", { scope: comando } ) }
                         });
                     } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[3]); }
                 } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[3]); }
@@ -162,7 +164,7 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
                         let m_datos = funciones.getDatosPregunta(preguntasBloque), response = funciones.getResponse(m_datos);
                         datos = funciones.getDatos(datos, m_datos);
                         preg = funciones.getDatosPreg(preg, m_datos);
-                        bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
+                        bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
                     } else { log.error(error_cargar_array+" bloque.", { scope: comando } ) }
                 });
             } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[3]); }
@@ -193,7 +195,7 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
                     let m_datos = funciones.getDatosPregunta(preguntasAnio), response = funciones.getResponse(m_datos);
                     datos = funciones.getDatos(datos, m_datos);
                     preg = funciones.getDatosPreg(preg, m_datos);
-                    bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
+                    bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
                 } else { log.error(error_cargar_array+" año.", { scope: comando }) }
             } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[8]); }
         } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" año."); }
@@ -203,20 +205,21 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
 bot.on('callback_query', (callbackQuery) => {
     if( callbackQuery.data == '') { bot.sendMessage(callbackQuery.message.chat.id, "No has respondido a la pregunta"); }
     else if( callbackQuery.data != '') { let langElegido = ''; let arrayIdiomas = listas.listIdiomas(); let idioma = { "es" : "Español", "en" : "Inglés", "fr": "Francés", "pt" : "Portugués" }; if( callbackQuery.data == arrayIdiomas[0] || callbackQuery.data == arrayIdiomas[1] || callbackQuery.data == arrayIdiomas[2] || callbackQuery.data == arrayIdiomas[3] ){ idiomaElegido = callbackQuery.data;  if( arrayIdiomas[0] == callbackQuery.data ){ langElegido = idioma[arrayIdiomas[0]]; } if( arrayIdiomas[1] == callbackQuery.data ){ langElegido = idioma[arrayIdiomas[1]]; } if( arrayIdiomas[2] == callbackQuery.data ){ langElegido = idioma[arrayIdiomas[2]]; } if( arrayIdiomas[3] == callbackQuery.data ){ langElegido = idioma[arrayIdiomas[3]]; } bot.sendMessage(callbackQuery.message.chat.id, "Has elegido el idioma "+langElegido ); }
-        bot.sendMessage(callbackQuery.message.chat.id, oper.callbackQuery(callbackQuery.message, callbackQuery.data, datos_score, datos, accion), { parse_mode: "Markdown" }).then(() => { db_operations.insertRespUser(oper.createCallbackObject(callbackQuery.message, callbackQuery.data, accion, preg, datos, funciones.tipoRespuesta(datos[1], callbackQuery.data)) ); }); }
+        bot.sendMessage(callbackQuery.message.chat.id, oper.callbackQuery(callbackQuery.message, callbackQuery.data, datos_score, datos, accion), { parse_mode: "HTML" }).then(() => { db_operations.insertRespUser(oper.createCallbackObject(callbackQuery.message, callbackQuery.data, accion, preg, datos, funciones.tipoRespuesta(datos[1], callbackQuery.data)) ); }); }
 });
 // test
 bot.onText(/^\/test/, function(msg) { 
     let cid = msg.chat.id;
     let textoAutor = '', textoYear = '', textoPromo = '', textoBloque = '';
     let i=0, i1=0, i2=0, ea=0, ea1=0, ea2=0, ea3=0, g=0;
+    selected[0]='', selected[1]='', selected[2]='';
     bot.sendMessage(cid,  oper.commandTest(msg)+"¿Qué autor quieres elegir para hacer el test?", listas.getTestKeyboardAutores());
     //bot.onText(/.+/g, function(msg, match) {
     bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens|OpositaTest|Daypo|PreparaTic|OposTestTic|Opolex/, (msg) => {
         textoAutor = msg.text;
         if( funciones.findAutores(textoAutor) ){
             let autor = listas.listAutores();
-            let response = 'Has elegido realizar el test de *';
+            let response = 'Has elegido realizar el test de <b>';
             let autorElegido = funciones.textIncluyeArray(textoAutor, autor, "listAutores" );
             selected[0]=autorElegido;
             if( autorElegido === autor[0] ){ // INAP
@@ -237,13 +240,16 @@ bot.onText(/^\/test/, function(msg) {
                                     if( funciones.findPromociones(textoPromo) ){
                                         let promotion = listas.listPromociones();
                                         let promocionElegido = funciones.textIncluyeArray(textoPromo, promotion, "listPromociones" );
+                                        selected[1]=yearElegido;
                                         selected[2]=promocionElegido;
-                                        for(var i=0;i<selected.length;i++){ //console.log("selected: "+selected[i]);
+                                        response += selected[0]+" ";
+                                        response += selected[1]+" ";/*
+                                        for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]);
                                             response += selected[i]+" ";
-                                        }
+                                        }*/
                                     }
                                     if( i2 < 1 ){
-                                        bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
+                                        bot.sendMessage(msg.chat.id, response+"</b>", { parse_mode: "HTML" } );
                                         bot.sendMessage(msg.chat.id, "\nPulsa "+command[15], listas.getTestKeyboardBlank() ).then(() => {
                                             textoAutor = '', textoYear = '', textoPromo = '';
                                         });
@@ -266,8 +272,6 @@ bot.onText(/^\/test/, function(msg) {
                         if( funciones.findBloques(textoBloque) ){
                             let bloque = listas.listBloques();
                             let bloqueElegido = funciones.textIncluyeArray(textoBloque, bloque, "listBloques" );
-                            selected[1]=bloqueElegido;
-                            //console.log("Autor: "+autorElegido);
                             if( ea1 < 1 ){
                                 bot.sendMessage(msg.chat.id, "¿Quieres elegir un tema?", listas.getTestKeyboardSiNo() );
                                 ea1++;
@@ -277,19 +281,21 @@ bot.onText(/^\/test/, function(msg) {
                                         if( textoSINO === 'SI'){ // con tema
                                             bot.sendMessage(msg.chat.id, oper.commandTema(msg)+"¿Qué tema quieres elegir?", listas.getTestKeyboardTemas());
                                             bot.onText(/T01|T02|T03|T04|T04|T05|T06|T07|T08|T09|T10|T11/, (msg) => {
-                                                textoTema = msg.text;
+                                                textoTema = msg.text; selected[0]=autorElegido; selected[1]=bloqueElegido;  selected[2]=textoTema; console.log("textoTema: "+textoTema);
                                                 if( funciones.findTemas(textoTema) ){
                                                     let tema = listas.listTemas();
-                                                    response = 'Has elegido realizar el test de *';
                                                     tema_elegido = funciones.textIncluyeArray(textoTema, tema, "listTemas" );
                                                     tema_anterior = tema_elegido;
                                                     selected[2]=tema_elegido;
+                                                    response = 'Has elegido realizar el test de <b>';
+                                                    response += selected[0]+" "+selected[1]+" "+selected[2];
+                                                    /*
                                                     for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]);
                                                         response += selected[i]+" ";
-                                                    }
+                                                    }*/
                                                 }
                                                 if( ea3 < 1 ){
-                                                    bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
+                                                    bot.sendMessage(msg.chat.id, response+"</b>", { parse_mode: "HTML" } );
                                                     if( autorElegido === autor[1]) com = command[16];
                                                     else if( autorElegido === autor[2]) com = command[17];
                                                     else if( autorElegido === autor[5]) com = command[21];
@@ -306,8 +312,9 @@ bot.onText(/^\/test/, function(msg) {
 
                                         }
                                         else if( textoSINO === 'NO'){ //sin tema
+                                            selected[0]=autorElegido; selected[1]=bloqueElegido;
                                             response += selected[0]+" "+selected[1]; selected[2]=undefined;
-                                            bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
+                                            bot.sendMessage(msg.chat.id, response+"</b>", { parse_mode: "HTML" } );
                                             if( autorElegido === autor[1]) com = command[16];
                                             else if( autorElegido === autor[2]) com = command[17];
                                             else if( autorElegido === autor[5]) com = command[21];
@@ -332,7 +339,7 @@ bot.onText(/^\/test/, function(msg) {
                     response += selected[0];
                     if( autorElegido === autor[3]) com = command[18];
                     else if( autorElegido === autor[4]) com = command[19];
-                    bot.sendMessage(msg.chat.id, response+"*", { parse_mode: "Markdown" } );
+                    bot.sendMessage(msg.chat.id, response+"</b>", { parse_mode: "HTML" } );
                     bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() );
                     g++;
                 }
@@ -369,7 +376,7 @@ bot.onText(/^\/inap/, (msg) => {
                 let m_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(m_datos);
                 datos = funciones.getDatos(datos, m_datos);
                 preg = funciones.getDatosPreg(preg, m_datos);
-                bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
+                bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
             } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
@@ -386,15 +393,15 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
     else if( comando == command[27] ){ logs.logTestOpolex(msg); }
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
-        accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected0: "+selected[0]); console.log("selected1: "+selected[1]); console.log("selected 2: "+selected[2]); }
-        if( search_autor === '' ){
-            if( comando == command[16] ){ search_autor = "Emilio del bloque "+selected[1]; autor = "Emilio"; }
-            else if( comando == command[17] ){ search_autor = "Adams del bloque "+selected[1]; autor = "Adams"; }
-            else if( comando == command[21] ){ search_autor = "OpositaTest del bloque "+selected[1]; autor = "OpositaTest"; }
-            else if( comando == command[22] ){ search_autor = "Daypo del bloque "+selected[1]; autor = "Daypo"; }
-            else if( comando == command[23] ){ search_autor = "PreparaTic del bloque "+selected[1]; autor = "PreparaTic"; }
-            else if( comando == command[24] ){ search_autor = "OposTestTic del bloque "+selected[1]; autor = "OposTestTic"; }
-            else if( comando == command[27] ){ search_autor = "Opolex del bloque "+selected[1]; autor = "Opolex"; }
+        accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected "+i+": "+selected[i]); console.log("selected0: "+selected[0]); console.log("selected1: "+selected[1]); console.log("selected2: "+selected[2]); }
+        if( search_autor === '' ){ 
+            if( comando == command[16] ){ search_autor = "Emilio del bloque "+selected[1].substring(1,2); autor = "Emilio"; }
+            else if( comando == command[17] ){ search_autor = "Adams del bloque "+selected[1].substring(1,2); autor = "Adams"; }
+            else if( comando == command[21] ){ search_autor = "OpositaTest del bloque "+selected[1].substring(1,2); autor = "OpositaTest"; }
+            else if( comando == command[22] ){ search_autor = "Daypo del bloque "+selected[1].substring(1,2); autor = "Daypo"; }
+            else if( comando == command[23] ){ search_autor = "PreparaTic del bloque "+selected[1].substring(1,2); autor = "PreparaTic"; }
+            else if( comando == command[24] ){ search_autor = "OposTestTic del bloque "+selected[1].substring(1,2); autor = "OposTestTic"; }
+            else if( comando == command[27] ){ search_autor = "Opolex del bloque "+selected[1].substring(1,2); autor = "Opolex"; }
             bloque_search = selected[1];
             if(selected[2] === undefined){
                 temaAbuscar = undefined; 
@@ -416,7 +423,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
                     let mod_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(mod_datos);
                     datos = funciones.getDatos(datos, mod_datos);
                     preg = funciones.getDatosPreg(preg, mod_datos);
-                    bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
+                    bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
                 } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
             });
         }
@@ -432,7 +439,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
                     let m_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(m_datos);
                     datos = funciones.getDatos(datos, m_datos);
                     preg = funciones.getDatosPreg(preg, m_datos);
-                    bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
+                    bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
                 } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
             });
         }
@@ -463,7 +470,7 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
                 let m_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(m_datos);
                 datos = funciones.getDatos(datos, m_datos);
                 preg = funciones.getDatosPreg(preg, m_datos);
-                bot.sendMessage(msg.chat.id, response, { parse_mode: "Markdown", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
+                bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
             } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
@@ -471,7 +478,7 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
 // stop
 bot.onText(/^\/stop/, (msg) => {
     console.log("stop -> tema a buscar: "+temaAbuscar);
-    if( oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar), { parse_mode: "Markdown" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = '', bloque_search='', search_bloque = '', temaAbuscar = '', preg=[]; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
+    if( oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar), { parse_mode: "HTML" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], selected[0]='', selected[1]='', selected[2]='', search_autor = '', bloque_search='', search_bloque = '', temaAbuscar = '', preg=[]; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
     else { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar)); }
 });
 bot.onText(/^\/langWiki/, function onLangWiki(msg) {
@@ -500,4 +507,4 @@ bot.onText(/^\/searches/, (msg) => {
     });
 });
 // default
-bot.on('message', (msg) =>  { bot.sendMessage(msg.chat.id, oper.commandDefault(msg)); });
+bot.on('message', (msg) =>  { bot.sendMessage(msg.chat.id, oper.commandDefault(msg, selected)); });
