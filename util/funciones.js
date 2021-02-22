@@ -453,6 +453,7 @@ module.exports = {
       let opcion_c = ''
       let opcion_d = ''
       let resp_correcta = ''
+      let img = ''
       let datos_pregunta;
 
       if( !validaciones.arrayVacio(array, "arrayGetDatosPregunta") ){
@@ -468,9 +469,10 @@ module.exports = {
           opcion_c = array[i].opcion_c;
           opcion_d = array[i].opcion_d;
           resp_correcta = array[i].resp_correcta;
+          img = array[i].img;
         }
 
-        datos_pregunta = new model_pregunta(bloque, tema, autor, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, resp_correcta);
+        datos_pregunta = new model_pregunta(bloque, tema, autor, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, resp_correcta, img);
       }
 
       return datos_pregunta;

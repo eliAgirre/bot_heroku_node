@@ -4,7 +4,7 @@ class Pregunta {
     
   }*/
 
-  constructor(bloque, tema, autor, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, resp_correcta) {
+  constructor(bloque, tema, autor, enunciado, opcion_a, opcion_b, opcion_c, opcion_d, resp_correcta, img) {
     this._bloque = bloque;
     this._tema = tema;
     this._autor = autor;
@@ -14,6 +14,7 @@ class Pregunta {
     this._opcion_c = opcion_c;
     this._opcion_d = opcion_d;
     this._resp_correcta = resp_correcta;
+    this._img = img;
   }
   set bloque(bloque) {
     this._bloque = bloque;
@@ -78,6 +79,14 @@ class Pregunta {
 
   get resp_correcta(){
     return this._resp_correcta;
+  }
+
+  set img(img){
+    this._img = img;
+  }
+
+  get img(){
+    return this._img;
   }
   
   showPregunta() {

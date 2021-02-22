@@ -49,12 +49,15 @@ bot.onText(/^\/quiz/, (msg) => {
         db.collection(coleccion_preguntas).find().toArray((err, results) => { // consulta preguntas
             if (err) { log.error(err, { scope: 'find '+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                db_questions.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
+                db_questions.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta, obj.img)); //preg.showPregunta()
             });
             db_questions = funciones.shuffle(db_questions); // random preguntas
             let m_datos = funciones.getDatosPregunta(db_questions), response = funciones.getResponse(m_datos);
             datos = funciones.getDatos(datos, m_datos);
             preg = funciones.getDatosPreg(preg, m_datos);
+            if(m_datos.img !== undefined){
+                bot.sendPhoto(msg.chat.id, m_datos.img);
+            }
             bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" año o al bloque o sino al quiz."); }
@@ -127,13 +130,16 @@ bot.onText(/^\/blocXtema/, function(msg) {
                         db.collection(coleccion_preguntas).find({$and:[{ "bloque" : selected[0] },{ "tema" : temaAbuscar } ]}).toArray((err, results) => { // consulta bloque y tema
                             if (err) { log.error(err, { scope: 'find bloque '+selected[0]+" and tema "+selected[1]+" "+coleccion_preguntas } ); }
                             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                                preguntasTema.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
+                                preguntasTema.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta, obj.img)); //preg.showPregunta()
                             });
                             if( !validaciones.arrayVacio(preguntasTema, "preguntasTema") ){
                                 preguntasTema = funciones.shuffle(preguntasTema);
                                 let m_datos = funciones.getDatosPregunta(preguntasTema), response = funciones.getResponse(m_datos);
                                 datos = funciones.getDatos(datos, m_datos);
                                 preg = funciones.getDatosPreg(preg, m_datos);
+                                if(m_datos.img !== undefined){
+                                    bot.sendPhoto(msg.chat.id, m_datos.img);
+                                }
                                 bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
                             } else { bot.sendMessage(msg.chat.id, 'No hay preguntas para el *bloque '+search_bloque+" y tema "+temaAbuscar+'*.\nPara elegir otro pulsa '+command[25]+".\nMuchas gracias.", { parse_mode: "HTML" } ); log.error(error_cargar_array+" tema.", { scope: comando } ) }
                         });
@@ -157,13 +163,16 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
                 db.collection(coleccion_preguntas).find({ "bloque" : bloque_elegido.toUpperCase() }).toArray((err, results) => { // consulta bloque
                     if (err) { log.error(err, { scope: 'find bloque'+coleccion_preguntas } ); }
                     results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                        preguntasBloque.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
+                        preguntasBloque.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta, obj.img)); //preg.showPregunta()
                     });
                     if( !validaciones.arrayVacio(preguntasBloque, "preguntasBloque") ){
                         preguntasBloque = funciones.shuffle(preguntasBloque);
                         let m_datos = funciones.getDatosPregunta(preguntasBloque), response = funciones.getResponse(m_datos);
                         datos = funciones.getDatos(datos, m_datos);
                         preg = funciones.getDatosPreg(preg, m_datos);
+                        if(m_datos.img !== undefined){
+                            bot.sendPhoto(msg.chat.id, m_datos.img);
+                        }
                         bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });
                     } else { log.error(error_cargar_array+" bloque.", { scope: comando } ) }
                 });
@@ -187,7 +196,7 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
                 db.collection(coleccion_preguntas).find({$or:[{ "autor" : autorLI1 },{ "autor" : autorPI1 } ]}).toArray((err, results) => { // consulta autor
                     if (err) { log.error(err, { scope: 'find autor '+autorLI1+" "+autorPI1+" "+coleccion_preguntas } ); }
                     results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                        preguntasAnio.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta));
+                        preguntasAnio.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta, obj.img)); //preg.showPregunta()
                     });
                 });
                 if( !validaciones.arrayVacio(preguntasAnio, "preguntasAnio") ){
@@ -195,6 +204,9 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
                     let m_datos = funciones.getDatosPregunta(preguntasAnio), response = funciones.getResponse(m_datos);
                     datos = funciones.getDatos(datos, m_datos);
                     preg = funciones.getDatosPreg(preg, m_datos);
+                    if(m_datos.img !== undefined){
+                        bot.sendPhoto(msg.chat.id, m_datos.img);
+                    }
                     bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
                 } else { log.error(error_cargar_array+" año.", { scope: comando }) }
             } else { bot.sendMessage(msg.chat.id, error_no_bien_elegido+command[8]); }
@@ -368,7 +380,7 @@ bot.onText(/^\/inap/, (msg) => {
         db.collection(coleccion_preguntas).find({ "autor" : search_autor }).toArray((err, results) => { // consulta autor
             if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
+                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta, obj.img); //preg.showPregunta()
                 questPersonalized.push(preg);
             });
             if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
@@ -376,6 +388,9 @@ bot.onText(/^\/inap/, (msg) => {
                 let m_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(m_datos);
                 datos = funciones.getDatos(datos, m_datos);
                 preg = funciones.getDatosPreg(preg, m_datos);
+                if(m_datos.img !== undefined){
+                    bot.sendPhoto(msg.chat.id, m_datos.img);
+                }
                 bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
             } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
         });
@@ -394,7 +409,8 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected "+i+": "+selected[i]); console.log("selected0: "+selected[0]); console.log("selected1: "+selected[1]); console.log("selected2: "+selected[2]); }
-        if( search_autor === '' ){ 
+        if( search_autor === '' ){
+            if(selected[1] !== undefined){
             if( comando == command[16] ){ search_autor = "Emilio del bloque "+selected[1].substring(1,2); autor = "Emilio"; }
             else if( comando == command[17] ){ search_autor = "Adams del bloque "+selected[1].substring(1,2); autor = "Adams"; }
             else if( comando == command[21] ){ search_autor = "OpositaTest del bloque "+selected[1].substring(1,2); autor = "OpositaTest"; }
@@ -403,6 +419,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
             else if( comando == command[24] ){ search_autor = "OposTestTic del bloque "+selected[1].substring(1,2); autor = "OposTestTic"; }
             else if( comando == command[27] ){ search_autor = "Opolex del bloque "+selected[1].substring(1,2); autor = "Opolex"; }
             bloque_search = selected[1];
+            }
             if(selected[2] === undefined){
                 temaAbuscar = undefined; 
             }
@@ -415,7 +432,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
             db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor } ]}).toArray((err, results) => { // consulta autor
                 if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
                 results.forEach(function(objeto) { //console.log("objeto: "+ JSON.stringify(objeto));
-                    let pregs = new model_pregunta(objeto.bloque, objeto.tema, objeto.autor, objeto.enunciado, objeto.opcion_a, objeto.opcion_b, objeto.opcion_c, objeto.opcion_d, objeto.resp_correcta); //pregs.showPregunta()
+                    let pregs = new model_pregunta(objeto.bloque, objeto.tema, objeto.autor, objeto.enunciado, objeto.opcion_a, objeto.opcion_b, objeto.opcion_c, objeto.opcion_d, objeto.resp_correcta, objeto.img); //pregs.showPregunta()
                     questPersonalized.push(pregs);
                 });
                 if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
@@ -423,15 +440,18 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
                     let mod_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(mod_datos);
                     datos = funciones.getDatos(datos, mod_datos);
                     preg = funciones.getDatosPreg(preg, mod_datos);
+                    if(mod_datos.img !== undefined){
+                        bot.sendPhoto(msg.chat.id, mod_datos.img);
+                    }
                     bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
                 } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
             });
         }
         else if( temaAbuscar !== undefined){
-            db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor }, {"tema": temaAbuscar} ]}).toArray((err, results) => { // consulta autor
+            db.collection(coleccion_preguntas).find({$and:[ { "bloque": bloque_search },{ "autor" : autor }, {"tema": temaAbuscar} /*, { img: RegExp('.*http*.')}*/  ]}).toArray((err, results) => { // consulta autor
                 if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
                 results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                    let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor, obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
+                    let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor, obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta, obj.img); //preg.showPregunta()
                     questPersonalized.push(preg);
                 });
                 if( !validaciones.arrayVacio(questPersonalized, "questPersonalized "+search_autor) ){
@@ -439,6 +459,10 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
                     let m_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(m_datos);
                     datos = funciones.getDatos(datos, m_datos);
                     preg = funciones.getDatosPreg(preg, m_datos);
+                    //console.log("m_datos.img "+m_datos.img);
+                    if(m_datos.img !== undefined){
+                        bot.sendPhoto(msg.chat.id, m_datos.img);
+                    }
                     bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
                 } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
             });
@@ -461,7 +485,7 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
         db.collection(coleccion_preguntas).find({ "autor" : search_autor }).toArray((err, results) => { // consulta autor
             if (err) { log.error(err, { scope: 'find autor '+search_autor+" "+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
-                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor, obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta); //preg.showPregunta()
+                let preg = new model_pregunta(obj.bloque, obj.tema, obj.autor, obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta, obj.img); //preg.showPregunta()
                 questPersonalized.push(preg);
                 
             });
@@ -470,6 +494,9 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
                 let m_datos = funciones.getDatosPregunta(questPersonalized), response = funciones.getResponse(m_datos);
                 datos = funciones.getDatos(datos, m_datos);
                 preg = funciones.getDatosPreg(preg, m_datos);
+                if(m_datos.img !== undefined){
+                    bot.sendPhoto(msg.chat.id, m_datos.img);
+                }
                 bot.sendMessage(msg.chat.id, response, { parse_mode: "HTML", reply_markup: keyboard }).then(() => { console.log("datos: \nenunciado: "+datos[0]+"\n resp_correcta: "+datos[1]); });   
             } else { log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+search_autor }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
         });
