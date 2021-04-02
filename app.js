@@ -29,6 +29,7 @@ const oper = require('./util/comandos.js'); // constantes operaciones
 const listas = require('./util/listas.js'); // constantes listas/arrays
 const keyboard = listas.getKeyboard();
 const command = listas.arrayCommands();
+const cronometro = require('./util/timer.js'); // constantes cronometro
 // constantes errores ------
 const WARNING = '⚠️', ARROW = '➡️';
 const error_cargar_array = WARNING+" Error al cargar el array de preguntas por";
@@ -37,6 +38,7 @@ const error_cambio_comando = "Para cambiar de test "+ARROW+" "+command[12]+" y d
 // variables globales- ------ var array = funciones.readFile(file_preguntas); var preguntas = funciones.getPreguntas(array);
 var datos_score = [0,0], datos = [], preguntasBloque = [],  preguntasAnio = [], preg = [], selected = [], preguntasTema = [];
 var accion = '', accion_anterior = '', bloque_anterior = '', anio_anterior = '', search_autor = '', bloque_search = '', tema_search='', autor = '', tema_elegido = '', temaAbuscar = '', search_bloque = '';
+var marcha = 0, empiece, actual = 0, time = 0;
 // comaandos
 bot.onText(/^\/start/, (msg) => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], search_autor = ''; idiomaElegido = msg.from.language_code; bot.sendMessage(msg.chat.id, oper.commandStart(msg), listas.getTestKeyboardBlank()); });
 // help
@@ -46,6 +48,7 @@ bot.onText(/^\/quiz/, (msg) => {
     logs.logQuiz(msg); let db = clientMongo.getDb(), db_questions = []; accion = command[2];
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
+        if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log("marcha: ", marcha); console.log("empiece: ", empiece);}
         db.collection(coleccion_preguntas).find().toArray((err, results) => { // consulta preguntas
             if (err) { log.error(err, { scope: 'find '+coleccion_preguntas } ); }
             results.forEach(function(obj) { //console.log("obj: "+ JSON.stringify(obj));
@@ -119,6 +122,7 @@ bot.onText(/^\/blocXtema/, function(msg) {
         accion = comando;
         if (accion_anterior == '' | accion == accion_anterior){
             accion_anterior = accion;
+            if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log("marcha: ", marcha); console.log("empiece: ", empiece);}
             if (bloque_anterior == '' | bloque_elegido == bloque_anterior){
                 if (bloque_elegido.toLowerCase() == command[3].substring(1,command[3].length )|| bloque_elegido.toLowerCase() == command[4].substring(1,command[4].length ) //b2
                     || bloque_elegido.toLowerCase() == command[5].substring(1,command[5].length ) || bloque_elegido.toLowerCase() == command[6].substring(1,command[6].length ) ){ //b4
@@ -156,6 +160,7 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
+        if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log("marcha: ", marcha); console.log("empiece: ", empiece);}
         if (bloque_anterior == '' | bloque_elegido == bloque_anterior){
             if (bloque_elegido.toLowerCase() == command[3].substring(1,command[3].length )|| bloque_elegido.toLowerCase() == command[4].substring(1,command[4].length ) //b2
                 || bloque_elegido.toLowerCase() == command[5].substring(1,command[5].length ) || bloque_elegido.toLowerCase() == command[6].substring(1,command[6].length ) ){ //b4
@@ -187,6 +192,7 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
+        if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log("marcha: ", marcha); console.log("empiece: ", empiece);}
         if ( anio_anterior == '' | anio_elegido == anio_anterior){
             if ( anio_elegido == command[7].substring(1,command[7].length ) || anio_elegido == command[8].substring(1,command[8].length ) //2015
                 || anio_elegido == command[9].substring(1,command[9].length ) || anio_elegido == command[10].substring(1,command[10].length ) //2017
@@ -372,6 +378,7 @@ bot.onText(/^\/inap/, (msg) => {
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
+        if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log("marcha: ", marcha); console.log("empiece: ", empiece);}
         //for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); }
         if( search_autor === '' ){
             search_autor = "TAI-"+selected[2]+"-"+selected[1]+"-1";
@@ -409,6 +416,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected "+i+": "+selected[i]); console.log("selected0: "+selected[0]); console.log("selected1: "+selected[1]); console.log("selected2: "+selected[2]); }
+        if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log("marcha: ", marcha); console.log("empiece: ", empiece);}
         if( search_autor === '' ){
             if(selected[1] !== undefined){
             if( comando == command[16] ){ search_autor = "Emilio del bloque "+selected[1].substring(1,2); autor = "Emilio"; }
@@ -478,6 +486,7 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
     accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
+        if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log("marcha: ", marcha); console.log("empiece: ", empiece);}
         if( search_autor === '' ){
             search_autor = selected[0];
             selected = [];
@@ -505,7 +514,7 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
 // stop
 bot.onText(/^\/stop/, (msg) => {
     console.log("stop -> tema a buscar: "+temaAbuscar);
-    if( oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar), { parse_mode: "HTML" }).then(() => { datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], selected[0]='', selected[1]='', selected[2]='', search_autor = '', bloque_search='', search_bloque = '', temaAbuscar = '', preg=[]; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
+    if( oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar), { parse_mode: "HTML" }).then(() => { if(marcha === 1){  let tiempo = cronometro.tiempo(marcha, actual, empiece, time); cronometro.reiniciar(marcha, time); bot.sendMessage(msg.chat.id, "Con el tiempo <b>"+tiempo+"</b>", { parse_mode: "HTML" }); } datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', selected = [], selected[0]='', selected[1]='', selected[2]='', search_autor = '', bloque_search='', search_bloque = '', temaAbuscar = '', preg=[]; db_operations.insertRespUser(oper.createStopObject(msg)); }); }
     else { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar)); }
 });
 bot.onText(/^\/langWiki/, function onLangWiki(msg) {
