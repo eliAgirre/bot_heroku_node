@@ -7,18 +7,18 @@ module.exports = {
     listCommandHelp: function() {
 
         commands = {  // command description used in the "help" command 
-            'start'       : 'Bienvenido al chatbot', 
-            'help'        : 'Esta instrucción informa sobre los comandos de este bot',
-            'quiz'        : 'Empezar el test',
+            'start'       : 'Bienvenido al chatbot o reinicio.', 
+            'help'        : 'Esta instrucción informa sobre los comandos de este bot.',
+            'quiz'        : 'Empezar el test.',
             'b1'          : 'Test bloque 1 - Legislacion.',
             'b2'          : 'Test bloque 2 - Tecnología básica.',
             'b3'          : 'Test bloque 3 - Programación.',
             'b4'          : 'Test bloque 4 - Sistemas.',
-            '2014'        : 'Test 2014 INAP',
-            '2015'        : 'Test 2015 INAP',
-            '2016'        : 'Test 2016 INAP',
-            '2017'        : 'Test 2017 INAP',
-            '2018'        : 'Test 2018 INAP',
+            '2014'        : 'Test 2014 INAP.',
+            '2015'        : 'Test 2015 INAP.',
+            '2016'        : 'Test 2016 INAP.',
+            '2017'        : 'Test 2017 INAP.',
+            '2018'        : 'Test 2018 INAP.',
             'test'        : 'Test personalizado.',
             'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
             'wiki'        : 'Busca información en la wikipedia en castellano.',
@@ -31,18 +31,18 @@ module.exports = {
     listCommand: function() {
 
         commands = {
-            'start'       : 'Bienvenido al chatbot', 
-            'help'        : 'Esta instrucción informa sobre los comandos de este bot',
-            'quiz'        : 'Empezar el test',
+            'start'       : 'Bienvenido al chatbot o reinicio.', 
+            'help'        : 'Esta instrucción informa sobre los comandos de este bot.',
+            'quiz'        : 'Empezar el test.',
             'b1'          : 'Test bloque 1 - Legislacion.',
             'b2'          : 'Test bloque 2 - Tecnología básica.',
             'b3'          : 'Test bloque 3 - Programación.',
             'b4'          : 'Test bloque 4 - Sistemas.',
-            '2014'        : 'Test 2014 INAP',
-            '2015'        : 'Test 2015 INAP',
-            '2016'        : 'Test 2016 INAP',
-            '2017'        : 'Test 2017 INAP',
-            '2018'        : 'Test 2018 INAP',
+            '2014'        : 'Test 2014 INAP.',
+            '2015'        : 'Test 2015 INAP.',
+            '2016'        : 'Test 2016 INAP.',
+            '2017'        : 'Test 2017 INAP.',
+            '2018'        : 'Test 2018 INAP.',
             'test'        : 'Test personalizado.',
             'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
             'wiki'        : 'Busca información en la wikipedia en castellano.',
@@ -121,6 +121,24 @@ module.exports = {
         const idioma = ["es","en","fr","pt","eu","ca","gl","an","ast"];
 
         return idioma;
+    },
+
+    getListArray: function(){
+
+        const arrayList =  ["db_questions",         //0
+                            "preguntasBlocXTema",   //1
+                            "preguntasBloque",      //2
+                            "preguntasAnio",        //3
+                            "questPersonalized",    //4
+                            "OpositaTest",  //5
+                            "Daypo",        //6
+                            "PreparaTic",   //7
+                            "Opolex",       //8
+                            "OposTestTic"   //9
+                            ];
+
+        return arrayList;
+
     },
 
     objectIdioma: function(){

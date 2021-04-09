@@ -5,15 +5,14 @@ const logs = require('./logs.js');
 const funciones = require('./funciones.js');
 // constantes listas/arrays
 const listas = require('./listas.js');
-const commands = listas.listCommand();
 const command = listas.arrayCommands();
 const commandHelp = listas.listCommandHelp();
 const CHECK = '✅', EQUIS = '❌', ARROW = '➡️', HANDS = '🙌', STOP = '✋', REPEAT = '🔂', SAD = '😥', CAN = '💪';
 
 module.exports = {
 
-    commandStart: function(msg){
-        logs.logStart(msg);
+    commandStart: function(msg, comando){
+        logs.logs(msg, comando);
         let first_name = msg.chat.first_name;
         let uid = funciones.knownUsers(msg.chat.id);
         let response = "";
@@ -24,16 +23,16 @@ module.exports = {
         return response;
     },
 
-    commandHelp: function(msg){
-        logs.logHelp(msg);
+    commandHelp: function(msg, comando){
+        logs.logs(msg, comando);
         let response = "Comandos disponibles para este bot: \n" 
         for (key in commandHelp)  // generate help text out of the commands dictionary defined at the top 
             response += "/"+key +' : '+commandHelp[key]+"\n"
         return response;   
     },
 
-    callbackQuery: function(msg, data, datos_score, datos, accion){
-        logs.logCallback(msg);
+    callbackQuery: function(msg, data, datos_score, datos, accion, comando){
+        logs.logs(msg, comando);
         let user_answer = funciones.getRespuestaUser(data);
         let response = '', emoji = '';
         if( user_answer != ''){
@@ -63,26 +62,26 @@ module.exports = {
         return doc;
     },
 
-    commandTest: function(msg){
-        logs.logTest(msg);
+    commandTest: function(msg, comando){
+        logs.logs(msg, comando);
         let response = "Has elegido realizar un test personalizado. "+HANDS+" \n" 
         return response;   
     },
 
-    commandTestInap: function(msg){
-        logs.logTestInap(msg);
+    commandTestInap: function(msg, comando){
+        logs.logs(msg, comando);
         let response = "Has elegido realizar un test de INAP. "+HANDS+" \n" 
         return response;   
     },
 
-    commandTema: function(msg){
-        logs.logTestTema(msg);
+    commandTema: function(msg, comando){
+        logs.logs(msg, comando);
         let response = "Has elegido realizar un test personalizado por tema. "+HANDS+" \n" 
         return response;
     },
 
-    commandStop: function(msg, datos_score, accion, search_autor, search_bloque, search_tema){
-        logs.logStop(msg);
+    commandStop: function(msg, datos_score, accion, search_autor, search_bloque, search_tema, comando){
+        logs.logs(msg, comando);
         let response = '';
         let contador = 0, porcentaje = 0, incorrectos = 0, total = 0;
         console.log("commandStop -> search_tema: "+search_tema);
@@ -119,14 +118,14 @@ module.exports = {
                 }
                 
             }
-            else if ( accion == command[26]) {// blocXtema
+            else if ( accion == command[26]) { // blocXtema
                 response = "De las <b>"+contador.toString()+"</b> preguntas del <b>bloque "+search_bloque+" y tema "+search_tema+"</b>:\n\n"+CHECK+" <b>Correctas</b> : "+datos_score[0].toString()+".\n"+EQUIS+" <b>Incorrectas</b>: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
             }
             else
                 response = "De las <b>"+contador.toString()+"</b> preguntas.\n\n"+CHECK+" <b>Correctas</b> : "+datos_score[0].toString()+".\n"+EQUIS+" <b>Incorrectas</b>: "+datos_score[1].toString()+".\n\nCon el porcentaje: "+porcentaje.toString()+"%.\n"
         }
         else{
-            accion = command[2]+", "+command[3]+", "+command[4]+", "+command[5]+", "+command[6]+", "+command[8]+", "+command[9]+", "+command[10]+", "+command[25]+" o "+command[14];
+            accion = command[2]+", "+command[3]+", "+command[4]+", "+command[5]+", "+command[6]+", "+command[7]+", "+command[8]+", "+command[9]+", "+command[10]+", "+command[25]+" o "+command[14];
             response = "No hay puntuación "+SAD+"\nNo has respondido o has terminado.\n\n";
             response += "Empezar el test "+ARROW+" "+accion+" y después elegir alguna opción.";
         }
@@ -144,8 +143,8 @@ module.exports = {
         return doc;
     },
 
-    commandWiki: function(msg, search){
-        logs.logWiki(msg);
+    commandWiki: function(msg, search, comando){
+        logs.logs(msg, comando);
         let response = ''; let lang = msg.from.language_code;
         console.log("language code: "+lang);
         if( search.length > 0 ){
@@ -179,8 +178,8 @@ module.exports = {
         return response;
     },
 
-    commandLangWiki: function(msg){
-        logs.logWiki(msg);
+    commandLangWiki: function(msg, comando){
+        logs.logs(msg, comando, comando);
         let response = "Has elegido realizar una búsqueda en la wikipedia.\n" 
         return response;   
     },
@@ -195,8 +194,8 @@ module.exports = {
         return doc;
     },
 
-    commandDefault: function(msg, selected){
-        logs.logDefault(msg);
+    commandDefault: function(msg, selected, comando){
+        logs.logs(msg, comando);
         let response = '';
         if( msg.text !== undefined){
 
@@ -211,12 +210,13 @@ module.exports = {
             console.log("comando: "+comando);
             console.log("comando wiki: "+comando_wiki);
             console.log("search: "+search);
+
             if(selected !== undefined)
                 for(var i=0;i<selected.length;i++){ console.log("selected "+i+": "+selected[i]); }
 
             if ( !funciones.findCommnad(comando) & !funciones.findCommnad(comando_wiki) & comando === 'https:' ){ // si no es ningun comando
 
-                if ( !funciones.findAutores(texto) & !funciones.findBloques(texto) & !funciones.findYears(texto) & !funciones.findPromociones(texto) ){ // si no es ningun autor o bloque o promocion
+                if ( !funciones.findAutores(texto) & !funciones.findBloques(texto) & !funciones.findYears(texto) & !funciones.findPromociones(texto) & !funciones.findTemas(texto) ){ // si no es ningun autor o bloque o promocion
                     response = "No te entiendo \"" +texto+ "\"\nPuedes escribir el comando "+command[1]+" para saber qué comando utilizar."
                 }
             }
@@ -237,7 +237,7 @@ module.exports = {
             }
         }
         else{
-            response = "Si necesita ayuda puedes escribir /help.";
+            response = "Si necesita ayuda puedes escribir "+command[1]+".";
         }
 
         return response;

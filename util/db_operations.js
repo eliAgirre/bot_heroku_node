@@ -2,7 +2,7 @@
 const log = require('bristol');
 
 // database
-const clientMongo = require('../database/config.js');
+const clientMongo = require('../database/db.js');
 
 // colecciones db
 const coleccion_resp_users="respuestas_user";
