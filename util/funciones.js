@@ -2,7 +2,6 @@ const listas = require('./listas.js');
 const validaciones = require('./validaciones.js');
 const model_pregunta = require('../model/Pregunta.js');
 const commands = listas.listCommand();
-const command = listas.arrayCommands();
 const autores = listas.listAutores();
 const bloques = listas.listBloques();
 const years = listas.listYears();
@@ -11,9 +10,6 @@ const temas = listas.listTemas();
 const idiomas = listas.listIdiomas();
 var knownUsers = [];
 var userStep = [];
-
-// operaciones db
-const db_operations = require('./db_operations.js');
 
 module.exports = {
 
@@ -543,19 +539,6 @@ module.exports = {
       preg = this.getDatosPreg(preg, m_datos);
       return m_datos, response;
 
-    },
-
-    getSearchAutor: function(search_autor, comando, selected, autor){
-
-      if( comando == command[16] ){ search_autor = "Emilio del bloque "+selected.substring(1,2); autor = "Emilio"; }
-      else if( comando == command[17] ){ search_autor = "Adams del bloque "+selected.substring(1,2); autor = "Adams"; }
-      else if( comando == command[21] ){ search_autor = "OpositaTest del bloque "+selected.substring(1,2); autor = "OpositaTest"; }
-      else if( comando == command[22] ){ search_autor = "Daypo del bloque "+selected.substring(1,2); autor = "Daypo"; }
-      else if( comando == command[23] ){ search_autor = "PreparaTic del bloque "+selected.substring(1,2); autor = "PreparaTic"; }
-      else if( comando == command[24] ){ search_autor = "OposTestTic del bloque "+selected.substring(1,2); autor = "OposTestTic"; }
-      else if( comando == command[27] ){ search_autor = "Opolex del bloque "+selected.substring(1,2); autor = "Opolex"; }
-
-      return search_autor, autor;
     }
     
   }

@@ -172,97 +172,77 @@ bot.on('callback_query', (callbackQuery) => {
 // test personalized
 bot.onText(/^\/test/, function(msg) { 
     let cid = msg.chat.id; let textoAutor = '', textoYear = '', textoPromo = '', textoBloque = ''; selected[0]='', selected[1]='', selected[2]='';
-    let i=0, i1=0, i2=0, ea=0, ea1=0, ea2=0, ea3=0, g=0;
     bot.sendMessage(cid,  oper.commandTest(msg, command[14])+"¿Qué autor quieres elegir para hacer el test?", listas.getTestKeyboardAutores()); //bot.onText(/.+/g, function(msg, match) {
-    bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens|OpositaTest|Daypo|PreparaTic|OposTestTic|Opolex/, (msg) => { let cid2 = msg.chat.id; textoAutor = msg.text;
+    bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens|OpositaTest|Daypo|PreparaTic|OposTestTic|Opolex/, (msg) => { textoAutor = msg.text;
         if( funciones.findAutores(textoAutor) ){ // existe autor
             let autor = listas.listAutores();
             let response = 'Has elegido realizar el test de <b>';
             let autorElegido = funciones.textIncluyeArray(textoAutor, autor, "listAutores" ); selected[0]=autorElegido;
-            if( autorElegido === autor[0] ){ /* INAP */ 
-                if( i < 1 ){
-                    bot.sendMessage(cid2, "¿Qué año quieres?", listas.getTestKeyboardYears() ); i++;
-                    bot.onText(/2014|2015|2015|2016|2017|2018/, (msg) => { let cid3 = msg.chat.id; textoYear = msg.text;
-                        if( funciones.findYears(textoYear) ){ // existe year
-                            let year = listas.listYears(); let yearElegido = funciones.textIncluyeArray(textoYear, year, "listYears" );                              
-                            selected[1]=yearElegido;
-                            if( i1 < 1 ){
-                            bot.sendMessage(cid3, "¿Qué promoción quieres?", listas.getTestKeyboardPromocion() ); i1++;
-                            bot.onText(/PI|LI/, (msg) => { let cid4 = msg.chat.id; textoPromo = msg.text;
-                                if( funciones.findPromociones(textoPromo) ){ // existe promo
-                                    let promotion = listas.listPromociones();
-                                    let promocionElegido = funciones.textIncluyeArray(textoPromo, promotion, "listPromociones" );
-                                    selected[1]=yearElegido; selected[2]=promocionElegido;
-                                    response += selected[0]+" "; response += selected[1]+" "; // for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); response += selected[i]+" "; }
-                                }
-                                if( i2 < 1 ){
-                                    bot.sendMessage(cid4, response+"</b>", { parse_mode: modo } );
-                                    bot.sendMessage(cid4, "\nPulsa "+command[15], listas.getTestKeyboardBlank() ).then(() => { textoAutor = '', textoYear = '', textoPromo = ''; }); 
-                                    i2++;
-                                }
-                            }); }
-                        } 
-                    });
-                }
-            } // INAP
+            if( autorElegido === autor[0] ){ // INAP              
+                bot.sendMessage(msg.chat.id, "¿Qué año quieres?", listas.getTestKeyboardYears() );
+                bot.onText(/2014|2015|2015|2016|2017|2018/, (msg) => { textoYear = msg.text;
+                    if( funciones.findYears(textoYear) ){ // existe year
+                        let year = listas.listYears(); let yearElegido = funciones.textIncluyeArray(textoYear, year, "listYears" );                              
+                        selected[1]=yearElegido;
+                        bot.sendMessage(msg.chat.id, "¿Qué promoción quieres?", listas.getTestKeyboardPromocion() );
+                        bot.onText(/PI|LI/, (msg) => { textoPromo = msg.text;
+                            if( funciones.findPromociones(textoPromo) ){ // existe promo
+                                let promotion = listas.listPromociones();
+                                let promocionElegido = funciones.textIncluyeArray(textoPromo, promotion, "listPromociones" );
+                                selected[1]=yearElegido; selected[2]=promocionElegido;
+                                response += selected[0]+" "; response += selected[1]+" "; // for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); response += selected[i]+" "; }
+                            }
+                            bot.sendMessage(msg.chat.id, response+"</b>", { parse_mode: modo } );
+                            bot.sendMessage(msg.chat.id, "\nPulsa "+command[15], listas.getTestKeyboardBlank() ).then(() => { textoAutor = '', textoYear = '', textoPromo = ''; });
+                    }); }
+            }); } // INAP
             else if(  autorElegido === autor[1] | autorElegido === autor[2] | autorElegido === autor[5] | autorElegido === autor[6] | autorElegido === autor[7] 
                 | autorElegido === autor[8] | autorElegido === autor[9] ){ // Emmilio o Adams u OpositaTest o Daypo o PreparaTic u Opolex o TestOposTic
-                if( ea < 1 ){
-                    bot.sendMessage(cid2, "¿Qué bloque quieres?", listas.getTestKeyboardBloques()); ea++;
-                    bot.onText(/B1|B2|B3|B4/, (msg) => { let cid3 = msg.chat.id; textoBloque = msg.text;
+                bot.sendMessage(msg.chat.id, "¿Qué bloque quieres?", listas.getTestKeyboardBloques());
+                bot.onText(/B1|B2|B3|B4/, (msg) => { textoBloque = msg.text;
                     if( funciones.findBloques(textoBloque) ){ // existe bloque
                         let bloque = listas.listBloques();
                         let bloqueElegido = funciones.textIncluyeArray(textoBloque, bloque, "listBloques" );
-                        if( ea1 < 1 ){
-                            bot.sendMessage(cid3, "¿Quieres elegir un tema?", listas.getTestKeyboardSiNo() );
-                            bot.onText(/SI|NO/, (msg) => { let cid4 = msg.chat.id; textoSINO = msg.text;
-                                if( textoSINO === 'SI'){ // con tema
-                                    bot.sendMessage(cid4, oper.commandTema(msg, command[25])+"¿Qué tema quieres elegir?", listas.getTestKeyboardTemas());
-                                    bot.onText(/T01|T02|T03|T04|T04|T05|T06|T07|T08|T09|T10|T11/, (msg) => { let cid5 = msg.chat.id; textoTema = msg.text;
-                                        selected[0]=autorElegido; selected[1]=bloqueElegido;  selected[2]=textoTema; console.log("textoTema: "+textoTema);
-                                        if( funciones.findTemas(textoTema) ){
-                                            let tema = listas.listTemas();
-                                            tema_elegido = funciones.textIncluyeArray(textoTema, tema, "listTemas" );
-                                            tema_anterior = tema_elegido; selected[2]=tema_elegido;
-                                            response = 'Has elegido realizar el test de <b>';
-                                            response += selected[0]+" "+selected[1]+" "+selected[2]; /* for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); response += selected[i]+" "; }*/
-                                        }
-                                        if( ea3 < 1 ){
-                                            bot.sendMessage(cid5, response+"</b>", { parse_mode: modo } );
-                                            if( autorElegido === autor[1]) com = command[16]; else if( autorElegido === autor[2]) com = command[17];
-                                            else if( autorElegido === autor[5]) com = command[21]; else if( autorElegido === autor[6]) com = command[22];
-                                            else if( autorElegido === autor[7]) com = command[23]; else if( autorElegido === autor[8]) com = command[27]; else if( autorElegido === autor[9]) com = command[24];
-                                            bot.sendMessage(cid5, "\nPulsa "+com, listas.getTestKeyboardBlank() ).then(() => { textoAutor = '', textoBloque = '', textoTema = ''; });
-                                            ea3++;
-                                        }
-                                }); }
-                                else if( textoSINO === 'NO'){ //sin tema
-                                    selected[0]=autorElegido; selected[1]=bloqueElegido;
-                                    response += selected[0]+" "+selected[1]; selected[2]=undefined;
-                                    bot.sendMessage(cid4, response+"</b>", { parse_mode: modo } );
+                        bot.sendMessage(msg.chat.id, "¿Quieres elegir un tema?", listas.getTestKeyboardSiNo() );
+                        bot.onText(/SI|NO/, (msg) => { textoSINO = msg.text;
+                            if( textoSINO === 'SI'){ // con tema
+                                bot.sendMessage(msg.chat.id, oper.commandTema(msg, command[25])+"¿Qué tema quieres elegir?", listas.getTestKeyboardTemas());
+                                bot.onText(/T01|T02|T03|T04|T04|T05|T06|T07|T08|T09|T10|T11/, (msg) => { textoTema = msg.text;
+                                    selected[0]=autorElegido; selected[1]=bloqueElegido;  selected[2]=textoTema; console.log("textoTema: "+textoTema);
+                                    if( funciones.findTemas(textoTema) ){
+                                        let tema = listas.listTemas();
+                                        tema_elegido = funciones.textIncluyeArray(textoTema, tema, "listTemas" );
+                                        tema_anterior = tema_elegido; selected[2]=tema_elegido;
+                                        response = 'Has elegido realizar el test de <b>';
+                                        response += selected[0]+" "+selected[1]+" "+selected[2]; /* for(var i=0;i<selected.length;i++){ console.log("selected: "+selected[i]); response += selected[i]+" "; }*/
+                                    }
+                                    bot.sendMessage(msg.chat.id, response+"</b>", { parse_mode: modo } );
                                     if( autorElegido === autor[1]) com = command[16]; else if( autorElegido === autor[2]) com = command[17];
                                     else if( autorElegido === autor[5]) com = command[21]; else if( autorElegido === autor[6]) com = command[22];
                                     else if( autorElegido === autor[7]) com = command[23]; else if( autorElegido === autor[8]) com = command[27]; else if( autorElegido === autor[9]) com = command[24];
-                                    bot.sendMessage(cid4, "\nPulsa "+com, listas.getTestKeyboardBlank() ).then(() => { textoAutor = '', textoBloque = ''; });
-                                }
-                                ea2++;
-                                });                                
+                                    bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() ).then(() => { textoAutor = '', textoBloque = '', textoTema = ''; });
+                            }); }
+                            else if( textoSINO === 'NO'){ //sin tema
+                                selected[0]=autorElegido; selected[1]=bloqueElegido;
+                                response += selected[0]+" "+selected[1]; selected[2]=undefined;
+                                bot.sendMessage(msg.chat.id, response+"</b>", { parse_mode: modo } );
+                                if( autorElegido === autor[1]) com = command[16]; else if( autorElegido === autor[2]) com = command[17];
+                                else if( autorElegido === autor[5]) com = command[21]; else if( autorElegido === autor[6]) com = command[22];
+                                else if( autorElegido === autor[7]) com = command[23]; else if( autorElegido === autor[8]) com = command[27]; else if( autorElegido === autor[9]) com = command[24];
+                                bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() ).then(() => { textoAutor = '', textoBloque = ''; });
                             }
-                        }
-                    });
-                }
-            } // Emilio o Adams u OpositaTest o Daypo o PreparaTic u Opolex o TestOposTic
+                        });
+                    }
+            }); } // Emmilio o Adams u OpositaTest o Daypo o PreparaTic u Opolex o TestOposTic
             else if( autorElegido === autor[3] | autorElegido === autor[4] ){ // Gokoan u Oposapiens
-                if( g < 1 ){
-                    response += selected[0];
-                    if( autorElegido === autor[3]) com = command[18];
-                    else if( autorElegido === autor[4]) com = command[19];
-                    bot.sendMessage(cid2, response+"</b>", { parse_mode: modo } );
-                    bot.sendMessage(cid2, "\nPulsa "+com, listas.getTestKeyboardBlank() ); }
-                    g++;}
+                response += selected[0];
+                if( autorElegido === autor[3]) com = command[18];
+                else if( autorElegido === autor[4]) com = command[19];
+                bot.sendMessage(msg.chat.id, response+"</b>", { parse_mode: modo } );
+                bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() ); }
             else {
                 if ( !funciones.findAutores(textoAutor) & !funciones.findBloques(textoBloque) & !funciones.findYears(textoYear) & !funciones.findPromociones(textoPromo) ) // si no es ningun autor o bloque o promocion
-                    bot.sendMessage(cid2, "No has seleccionado bien del teclado."); }
+                    bot.sendMessage(msg.chat.id, "No has seleccionado bien del teclado."); }
         } // cierre if //else { bot.sendMessage(cid, "No has seleccionado de forma adecuada del teclado el autor."); }
     });
 });
@@ -293,8 +273,31 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
         accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected "+i+": "+selected[i]); } /*console.log("selected0: "+selected[0]); console.log("selected1: "+selected[1]); console.log("selected2: "+selected[2]);*/
         if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece);} // cronometro
         if( search_autor === '' ){
-            if(selected[1] !== undefined){
-                search_autor, autor = funciones.getSearchAutor(search_autor, comando, selected[1], autor); bloque_search = selected[1];
+            if(selected[1] !== undefined){ search_autor, autor = funciones.getSearchAutor(search_autor, comando, selected[1], autor); bloque_search = selected[1];
+                let listAutor = listas.listAutores();
+                switch(comando){
+                    case command[16]:
+                        search_autor = listAutor[1]+" del bloque "+selected[1].substring(1,2); autor = listAutor[1]; // Emilio
+                        break;
+                    case command[17]:
+                        search_autor = listAutor[2]+" del bloque "+selected[1].substring(1,2); autor = listAutor[2]; // Adams
+                        break;
+                    case command[21]:
+                        search_autor = listAutor[5]+" del bloque "+selected[1].substring(1,2); autor = listAutor[5]; // OpositaTest
+                        break;
+                    case command[22]:
+                        search_autor = listAutor[6]+" del bloque "+selected[1].substring(1,2); autor = listAutor[6]; // Daypo
+                        break;
+                    case command[23]:
+                        search_autor = listAutor[17]+" del bloque "+selected[1].substring(1,2); autor = listAutor[7]; // PreparaTic
+                        break;
+                    case command[24]:
+                        search_autor = listAutor[9]+" del bloque "+selected[1].substring(1,2); autor = listAutor[9]; // OposTestTic
+                        break;
+                    case command[27]:
+                        search_autor = listAutor[8]+" del bloque "+selected[1].substring(1,2); autor = listAutor[8]; // Opolex
+                        break;
+                }
             }
             if(selected[2] === undefined){ temaAbuscar = undefined; }
             else if(selected[2] !== undefined){ temaAbuscar = selected[2].substring(1, selected[2].length ); /*console.log("temaAbuscar: "+temaAbuscar);*/ }
@@ -349,5 +352,6 @@ bot.onText(/^\/langWiki/, function onLangWiki(msg) {
 bot.onText(/^\/wiki (.+)/, function onWikiText(msg, match) {
     let response = ''; if( oper.commandWiki(msg, match[1], command[13]).length > 0 ) { response = oper.commandWiki(msg, match[1], command[13]); bot.sendMessage(msg.chat.id, oper.commandWiki(msg, match[1], command[13]), { parse_mode: modo }).then(() => { db_operations.insertSearchUser( oper.createSearchObject(msg, response) ); }); }
 });
+bot.on("polling_error", console.log);
 // default
 //bot.on('message', (msg) =>  { bot.sendMessage(msg.chat.id, oper.commandDefault(msg, selected, "default")); });
