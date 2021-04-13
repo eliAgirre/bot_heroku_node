@@ -273,7 +273,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
         accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected "+i+": "+selected[i]); } /*console.log("selected0: "+selected[0]); console.log("selected1: "+selected[1]); console.log("selected2: "+selected[2]);*/
         if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece);} // cronometro
         if( search_autor === '' ){
-            if(selected[1] !== undefined){ search_autor, autor = funciones.getSearchAutor(search_autor, comando, selected[1], autor); bloque_search = selected[1];
+            if(selected[1] !== undefined){
                 let listAutor = listas.listAutores();
                 switch(comando){
                     case command[16]:
