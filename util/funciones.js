@@ -8,6 +8,7 @@ const years = listas.listYears();
 const promociones = listas.listPromociones();
 const temas = listas.listTemas();
 const idiomas = listas.listIdiomas();
+const command = listas.arrayCommands();
 var knownUsers = [];
 var userStep = [];
 
@@ -206,6 +207,24 @@ module.exports = {
 
       //return incluye;
       return texto;
+    },
+
+    textoIncluyeArray: function(text, array, nombreArray){
+
+      var incluye = false;
+
+      if( !validaciones.arrayVacio(array, nombreArray)){
+
+        for (i=0;i<array.length;i++) {
+          //console.log(array[i])
+          if( text.includes(array[i]) ){
+            incluye = true;
+          }
+          
+        }
+      }
+
+      return incluye;
     },
 
     readFile: function(filename){
@@ -538,6 +557,21 @@ module.exports = {
       datos = this.getDatos(datos, m_datos);
       preg = this.getDatosPreg(preg, m_datos);
       return m_datos, response;
+
+    },
+
+    getComandoAutor: function(selected, com){
+
+      switch(selected){
+        case autores[1]: com = command[16]; break; // Emilio 
+        case autores[2]: com = command[17]; break; // Adams
+        case autores[6]: com = command[21]; break; // Daypo
+        case autores[7]: com = command[23]; break; // PreparaTic
+        case autores[8]: com = command[27]; break; // Opolex
+        case autores[9]: com = command[24]; break; // OposTestTic
+      }
+
+      return com;
 
     }
     
