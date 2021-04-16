@@ -176,7 +176,7 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
                     case command[17]: search_autor = listAutor[2]+literalBloque+selected[1].substring(1,2); autor = listAutor[2]; break; // Adams
                     case command[21]: search_autor = listAutor[5]+literalBloque+selected[1].substring(1,2); autor = listAutor[5]; break; // OpositaTest
                     case command[22]: search_autor = listAutor[6]+literalBloque+selected[1].substring(1,2); autor = listAutor[6]; break; // Daypo
-                    case command[23]: search_autor = listAutor[17]+literalBloque+selected[1].substring(1,2); autor = listAutor[7]; break; // PreparaTic
+                    case command[23]: search_autor = listAutor[7]+literalBloque+selected[1].substring(1,2); autor = listAutor[7]; break; // PreparaTic
                     case command[24]: search_autor = listAutor[9]+literalBloque+selected[1].substring(1,2); autor = listAutor[9]; break; // OposTestTic
                     case command[27]: search_autor = listAutor[8]+literalBloque+selected[1].substring(1,2); autor = listAutor[8]; break; /* Opolex */ }
             }
