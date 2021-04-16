@@ -19,10 +19,12 @@ module.exports = {
             '2016'        : 'Test 2016 INAP.',
             '2017'        : 'Test 2017 INAP.',
             '2018'        : 'Test 2018 INAP.',
+            'tema'        : 'Test por tema.',
             'test'        : 'Test personalizado.',
+            'failed'      : 'Test preguntas falladas.',
             'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
             'wiki'        : 'Busca información en la wikipedia en castellano.',
-            'tema'        : 'Test por tema.'
+            'wiki en'     : 'Busca información en la wikipedia en inglés.'
         }
         
         return commands;
@@ -57,7 +59,8 @@ module.exports = {
             'preparatic'  : 'Test del Daypo personalido.',
             'opostestic'  : 'Test del OposTestTic personalido.',
             'tema'        : 'Test del tema.',
-            'opolex'      : 'Test del Opolex personalido.'
+            'opolex'      : 'Test del Opolex personalido.',
+            'failed'      : 'Test sobre preguntas falladas.'
         }
         
         return commands;
@@ -130,11 +133,12 @@ module.exports = {
                             "preguntasBloque",      //2
                             "preguntasAnio",        //3
                             "questPersonalized",    //4
-                            "OpositaTest",  //5
-                            "Daypo",        //6
-                            "PreparaTic",   //7
-                            "Opolex",       //8
-                            "OposTestTic"   //9
+                            "OpositaTest",          //5
+                            "Daypo",                //6
+                            "PreparaTic",           //7
+                            "Opolex",               //8
+                            "OposTestTic",          //9
+                            "failed_questions"      //10
                             ];
 
         return arrayList;
@@ -182,34 +186,35 @@ module.exports = {
 
     arrayCommands: function(){
 
-        let array_commands = [  "/start",   //0
-                                "/help",    //1
-                                "/quiz",    //2
-                                "/b1",      //3
-                                "/b2",      //4
-                                "/b3",      //5
-                                "/b4",      //6
-                                "/2014",    //7
-                                "/2015",    //8
-                                "/2016",    //9
-                                "/2017",    //10
-                                "/2018",    //11
-                                "/stop",    //12
-                                "/wiki",    //13
-                                "/test",    //14
-                                "/inap",    //15
-                                "/emilio",  //16
-                                "/adams",   //17
-                                "/gokoan",   //18
-                                "/oposapiens",//19
-                                "/searches",  //20
+        let array_commands = [  "/start",      //0
+                                "/help",       //1
+                                "/quiz",       //2
+                                "/b1",         //3
+                                "/b2",         //4
+                                "/b3",         //5
+                                "/b4",         //6
+                                "/2014",       //7
+                                "/2015",       //8
+                                "/2016",       //9
+                                "/2017",       //10
+                                "/2018",       //11
+                                "/stop",       //12
+                                "/wiki",       //13
+                                "/test",       //14
+                                "/inap",       //15
+                                "/emilio",     //16
+                                "/adams",      //17
+                                "/gokoan",     //18
+                                "/oposapiens", //19
+                                "/searches",   //20
                                 "/opositatest",//21
                                 "/daypo",      //22
                                 "/preparatic", //23
                                 "/opostestic", //24
                                 "/tema",       //25
-                                "/blocXtema",   //26
-                                "/opolex"       //27
+                                "/blocXtema",  //26
+                                "/opolex",     //27
+                                "/failed"      //28
                             ];
 
         return array_commands;

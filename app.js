@@ -222,6 +222,26 @@ bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
 });
+// comando - failed
+bot.onText(/^\/failed/, (msg) => {
+    logs.logs(msg, command[28]); accion = command[28]; let m_datos = '', response = '', user = msg.chat.username, comando = msg.text;
+    if (accion_anterior == '' | accion == accion_anterior){
+        accion_anterior = accion; let i=0;
+        clientMongo.findFailedDocs( user, function ( array_enunciado ) {
+            if(!validaciones.arrayVacio(array_enunciado, "array_enunciado" )){
+                array_enunciado = funciones.shuffle(array_enunciado);
+                clientMongo.findEnunciadoDocs( array_enunciado[i], function ( failed_questions ) {
+                    m_datos, response = funciones.getMdatosYresponse(failed_questions, m_datos, datos, preg, response);
+                    if(m_datos.img !== undefined)
+                        bot.sendPhoto(msg.chat.id, m_datos.img);
+                    if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
+                    bot.sendMessage(msg.chat.id, response, { parse_mode: modo, reply_markup: keyboard }).then(() => { console.log(mostrar_datos+datos[0]+mostrar_rok+datos[1]); });
+                });
+                i++;
+            } else { bot.sendMessage(msg.chat.id, command[12]); log.error(error_cargar_array, { scope: comando } ) }
+        });
+    } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer." ); }
+});
 // comando - stop
 bot.onText(/^\/stop/, function onStop(msg) { //console.log("stop -> tema a buscar: "+temaAbuscar);
     if( oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar, command[12] ).substring(0,2).trim() == "De" ) { bot.sendMessage(msg.chat.id, oper.commandStop(msg, datos_score, accion, search_autor, search_bloque, temaAbuscar, command[12] ), { parse_mode: modo }).then(() => { if(marcha === 1){  let tiempo = cronometro.tiempo(marcha, actual, empiece, time); cronometro.reiniciar(1, time); bot.sendMessage(msg.chat.id, "En tiempo:  <b>"+tiempo+"</b>", { parse_mode: modo }); } datos_score = [0,0], datos = ['',''], accion_anterior = '', accion = '', com = '',  bloque_anterior = '', anio_anterior = '', selected = [], selected[0]='', selected[1]='', selected[2]='', preguntasBloque = [], search_autor = '', bloque_search='', search_bloque = '', temaAbuscar = '', cont = 0, preg=[]; db_operations.insertRespUser(oper.createStopObject(msg)); }); }

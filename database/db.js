@@ -4,6 +4,7 @@ const user = process.env.USER;
 const pass = process.env.PASS;
 const base = process.env.DATABASE;
 const coleccion = process.env.COLLECTION;
+const coleccion2 = process.env.COLLECTION2;
 //const url = "mongodb+srv://"+user+":"+pass+"@cluster0-faeim.mongodb.net/test?retryWrites=true&w=majority";
 const url = "mongodb+srv://"+user+":"+pass+"@cluster0.faeim.mongodb.net/test";
 //const client = new MongoClient(url, { useNewUrlParser: true });
@@ -146,5 +147,33 @@ module.exports = {
         })
     });
   },
+  findFailedDocs: function( user, callback ){
+    this.connectToServer( function( err ) {
+      if (err) { console.log(err); }
+        _db.collection(coleccion2).find( {$and:[{ user : user },{ tipo_respuesta : 'incorrecta' } ]} ).toArray((err, results) => {
+          var array_enunciado = [];
+          if(err) return console.log(err)
+          if (results.length > 0) { //console.log(results);
+            results.forEach(function(obj) { //results.forEach(function(obj, i) { //console.log("obj: "+ JSON.stringify(obj));
+              array_enunciado.push( obj.enunciado );
+            });}
+          return callback( array_enunciado );
+        })
+    });
+  },
+  findEnunciadoDocs: function( enunciado, callback ){
+    this.connectToServer( function( err ) {
+      if (err) { console.log(err); }
+        _db.collection(coleccion).find( { enunciado : enunciado } ).toArray((err, results) => {
+          var failed_quests = [];
+          if(err) return console.log(err)
+          if (results.length > 0) { //console.log(results);
+            results.forEach(function(obj) { //results.forEach(function(obj, i) { //console.log("obj: "+ JSON.stringify(obj));
+              failed_quests.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta, obj.img)); //preg.showPregunta()
+            });}
+          return callback( failed_quests );
+        })
+    });
+  }
 
 };
