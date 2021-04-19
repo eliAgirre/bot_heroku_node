@@ -565,7 +565,8 @@ module.exports = {
       switch(selected){
         case autores[1]: com = command[16]; break; // Emilio 
         case autores[2]: com = command[17]; break; // Adams
-        case autores[6]: com = command[21]; break; // Daypo
+        case autores[5]: com = command[21]; break; // OpositaTest
+        case autores[6]: com = command[22]; break; // Daypo
         case autores[7]: com = command[23]; break; // PreparaTic
         case autores[8]: com = command[27]; break; // Opolex
         case autores[9]: com = command[24]; break; // OposTestTic
