@@ -164,8 +164,8 @@ bot.onText(/^\/inap/, (msg) => {
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
 });
-// comando - emilio o adams u opositatest o daypo o preparatic u opolex
-bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostestic|^\/opolex/, (msg) => { 
+// comando - Emilio o adams u opositatest o daypo o preparatic u opolex 
+bot.onText(/^\/Emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostestic|^\/opolex/, (msg) => { 
     let m_datos = '', response = '', comando = msg.text; accion = comando, t = ''; const literalBloque = " del bloque ";
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion; for(var i=0;i<selected.length;i++){ console.log("selected "+i+": "+selected[i]); } /*console.log("selected0: "+selected[0]); console.log("selected1: "+selected[1]); console.log("selected2: "+selected[2]);*/
@@ -205,12 +205,12 @@ bot.onText(/^\/emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
         }); }
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer."); }
 });
-// comando - gokoan u oposapiens (bloque 1)
-bot.onText(/^\/gokoan|^\/oposapiens/, (msg) => {
+// comando - gokoan u oposapiens o funcionaTest (bloque 1)
+bot.onText(/^\/gokoan|^\/oposapiens|^\/funcionaTest/, (msg) => {
     let m_datos = '', response = '', comando = msg.text; accion = comando;
     if (accion_anterior == '' | accion == accion_anterior){
         accion_anterior = accion;
-        if( search_autor === '' ){ search_autor = selected[0]; selected = []; }
+        if( search_autor === '' ){ search_autor = selected[0]; selected = []; } console.log("search_autor: ", search_autor);
         clientMongo.findAutor( search_autor, function ( questPersonalized ) { // consulta autor
             if( !validaciones.arrayVacio(questPersonalized, db_array[4] ) ){
                 m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
@@ -239,6 +239,29 @@ bot.onText(/^\/failed/, (msg) => {
                 });
                 i++;
             } else { bot.sendMessage(msg.chat.id, command[12]); log.error(error_cargar_array, { scope: comando } ) }
+        });
+    } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer." ); }
+});
+// comando - examen [whatever]
+bot.onText(/^\/examen (.+)/, (msg, match) => { 
+    logs.logs(msg, msg.text); accion = command[30];
+    if (accion_anterior == '' | accion == accion_anterior){
+        accion_anterior = accion; examUser = match[1]; bot.sendMessage(msg.chat.id, command[30]);
+    } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer." ); }
+});
+// comando - exam
+bot.onText(/^\/exam/, (msg) => { 
+    logs.logs(msg, command[30]); accion = command[30]; let m_datos = '', response = '';
+    if (accion_anterior == '' | accion == accion_anterior){
+        accion_anterior = accion;
+        clientMongo.findRegExpEnunciado( examUser, function ( questPersonalized ) { // consulta whatever
+            if( !validaciones.arrayVacio(questPersonalized, db_array[4] ) ){
+                m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                if(m_datos.img !== undefined)
+                    bot.sendPhoto(msg.chat.id, m_datos.img);
+                if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
+                bot.sendMessage(msg.chat.id, response, { parse_mode: modo, reply_markup: keyboard }).then(() => { console.log(mostrar_datos+datos[0]+mostrar_rok+datos[1]); });
+            } else { bot.sendMessage(msg.chat.id, command[12]); log.error(error_cargar_array+" questPersonalized.", { scope: 'test_'+match }); bot.sendMessage(msg.chat.id, "Elije el test que quieres hacer, para ello puedes escribir el comando help o hacer clic en /help."); }
         });
     } else { bot.sendMessage(msg.chat.id, error_cambio_comando+" elegir el test que quieres hacer." ); }
 });
@@ -310,20 +333,21 @@ bot.onText(/T01|T02|T03|T04|T04|T05|T06|T07|T08|T09|T10|T11/, (msg) => {textoTem
     }
 });
 // texto - autores
-bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens|OpositaTest|Daypo|PreparaTic|OposTestTic|Opolex/, (msg) => { textoAutor = msg.text;
+bot.onText(/INAP|Emilio|Adams|Gokoan|OpoSapiens|OpositaTest|Daypo|PreparaTic|OposTestTic|Opolex|OposTestTic|FuncionaTest/, (msg) => { textoAutor = msg.text;
     if( funciones.findAutores(textoAutor) ){ // existe autor
         let response = 'Has elegido realizar el test de <b>', com = '';
         selected[0]=textoAutor; console.log("listAutor 0: "+listAutor[0]); console.log("textoAutor: "+textoAutor);
         if( textoAutor === listAutor[0] ) // INAP            
             bot.sendMessage(msg.chat.id, "¿Qué año quieres?", listas.getTestKeyboardYears() );
-        else if(  textoAutor === listAutor[1] | textoAutor === listAutor[2] | textoAutor === listAutor[5] | textoAutor === listAutor[6] | textoAutor === listAutor[7] 
-                | textoAutor === listAutor[8] | textoAutor === listAutor[9] ){ // Emmilio o Adams u OpositaTest o Daypo o PreparaTic u Opolex o TestOposTic
+        else if(  textoAutor === listAutor[1] |textoAutor === listAutor[2] | textoAutor === listAutor[5] | textoAutor === listAutor[6] | textoAutor === listAutor[7] 
+                | textoAutor === listAutor[8] | textoAutor === listAutor[9] ){ // Emilio o Adams u OpositaTest o Daypo o PreparaTic u Opolex o TestOposTic
                 bot.sendMessage(msg.chat.id, "¿Qué bloque quieres?", listas.getTestKeyboardBloques());
             } // Emmilio o Adams u OpositaTest o Daypo o PreparaTic u Opolex o TestOposTic
-        else if( textoAutor === listAutor[3] | textoAutor === listAutor[4] ){ // Gokoan u Oposapiens
+        else if( textoAutor === listAutor[10] | textoAutor === listAutor[3] | textoAutor === listAutor[4] ){ // Gokoan u Oposapiens o FuncionaTest
             response += selected[0];
-            if( textoAutor === listAutor[3]) com = command[18];
-            else if( textoAutor === listAutor[4]) com = command[19];
+            if( textoAutor === listAutor[3]) com = command[18]; // Gokoan
+            else if( textoAutor === listAutor[4]) com = command[19]; // OpoSapiens
+            else if( textoAutor === listAutor[10]) com = command[29]; // FuncionaTest
             bot.sendMessage(msg.chat.id, response+"</b>", { parse_mode: modo } );
             bot.sendMessage(msg.chat.id, "\nPulsa "+com, listas.getTestKeyboardBlank() ); }
     } // si no es ningun autor o bloque o promocion if ( !funciones.findAutores(textoAutor) & !funciones.findBloques(textoBloque) & !funciones.findYears(textoYear) & !funciones.findPromociones(textoPromo) ) // si no es ningun autor o bloque o promocion

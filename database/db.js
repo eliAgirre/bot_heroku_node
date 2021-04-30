@@ -161,17 +161,18 @@ module.exports = {
         })
     });
   },
-  findEnunciadoDocs: function( enunciado, callback ){
+  findRegExpEnunciado: function( match, callback ){
     this.connectToServer( function( err ) {
       if (err) { console.log(err); }
-        _db.collection(coleccion).find( { enunciado : enunciado } ).toArray((err, results) => {
-          var failed_quests = [];
+        _db.collection(coleccion).find( { enunciado: RegExp('.*'+match+'.*') } ).toArray((err, results) => {
+          var questPersonalized = [];
           if(err) return console.log(err)
           if (results.length > 0) { //console.log(results);
             results.forEach(function(obj) { //results.forEach(function(obj, i) { //console.log("obj: "+ JSON.stringify(obj));
-              failed_quests.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta, obj.img)); //preg.showPregunta()
-            });}
-          return callback( failed_quests );
+              questPersonalized.push(new model_pregunta(obj.bloque, obj.tema, obj.autor,  obj.enunciado, obj.opcion_a, obj.opcion_b, obj.opcion_c, obj.opcion_d, obj.resp_correcta, obj.img)); //preg.showPregunta()
+          });}
+          //console.log("array length: "+questPersonalized.length);
+          return callback( questPersonalized );
         })
     });
   }

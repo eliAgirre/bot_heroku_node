@@ -24,7 +24,8 @@ module.exports = {
             'failed'      : 'Test preguntas falladas.',
             'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
             'wiki'        : 'Busca información en la wikipedia en castellano.',
-            'wiki en'     : 'Busca información en la wikipedia en inglés.'
+            'wiki en'     : 'Busca información en la wikipedia en inglés.',
+            'examen'      : 'Examen de lo que desees. Por ejemplo: css o ce.'
         }
         
         return commands;
@@ -33,34 +34,36 @@ module.exports = {
     listCommand: function() {
 
         commands = {
-            'start'       : 'Bienvenido al chatbot o reinicio.', 
-            'help'        : 'Esta instrucción informa sobre los comandos de este bot.',
-            'quiz'        : 'Empezar el test.',
-            'b1'          : 'Test bloque 1 - Legislacion.',
-            'b2'          : 'Test bloque 2 - Tecnología básica.',
-            'b3'          : 'Test bloque 3 - Programación.',
-            'b4'          : 'Test bloque 4 - Sistemas.',
-            '2014'        : 'Test 2014 INAP.',
-            '2015'        : 'Test 2015 INAP.',
-            '2016'        : 'Test 2016 INAP.',
-            '2017'        : 'Test 2017 INAP.',
-            '2018'        : 'Test 2018 INAP.',
-            'test'        : 'Test personalizado.',
-            'stop'        : 'Se para el test y te da un resumen de tu puntuación.',
-            'wiki'        : 'Busca información en la wikipedia en castellano.',
-            'inap'        : 'Test del INAP personalido.',
-            'emilio'      : 'Test del Emilio personalido.',
-            'adams'       : 'Test del Adams personalido.',
-            'gokoan'      : 'Test del Gokoan personalido.',
-            'oposapiens'  : 'Test del Oposapiens personalido.',
-            'searches'    : 'Busquedas wiki.',
-            'opositatest' : 'Test del OpositaTest personalido.',
-            'daypo'       : 'Test del Daypo personalido.',
-            'preparatic'  : 'Test del Daypo personalido.',
-            'opostestic'  : 'Test del OposTestTic personalido.',
-            'tema'        : 'Test del tema.',
-            'opolex'      : 'Test del Opolex personalido.',
-            'failed'      : 'Test sobre preguntas falladas.'
+            'start'        : 'Bienvenido al chatbot o reinicio.', 
+            'help'         : 'Esta instrucción informa sobre los comandos de este bot.',
+            'quiz'         : 'Empezar el test.',
+            'b1'           : 'Test bloque 1 - Legislacion.',
+            'b2'           : 'Test bloque 2 - Tecnología básica.',
+            'b3'           : 'Test bloque 3 - Programación.',
+            'b4'           : 'Test bloque 4 - Sistemas.',
+            '2014'         : 'Test 2014 INAP.',
+            '2015'         : 'Test 2015 INAP.',
+            '2016'         : 'Test 2016 INAP.',
+            '2017'         : 'Test 2017 INAP.',
+            '2018'         : 'Test 2018 INAP.',
+            'test'         : 'Test personalizado.',
+            'stop'         : 'Se para el test y te da un resumen de tu puntuación.',
+            'wiki'         : 'Busca información en la wikipedia en castellano.',
+            'inap'         : 'Test del INAP personalizado.',
+            'emilio'       : 'Test del Emilio personalizado.',
+            'adams'        : 'Test del Adams personalizado.',
+            'gokoan'       : 'Test del Gokoan personalizado.',
+            'oposapiens'   : 'Test del Oposapiens personalizado.',
+            'searches'     : 'Busquedas wiki.',
+            'opositatest'  : 'Test del OpositaTest personalizado.',
+            'daypo'        : 'Test del Daypo personalizado.',
+            'preparatic'   : 'Test del Daypo personalizado.',
+            'opostestic'   : 'Test del OposTestTic personalizado.',
+            'tema'         : 'Test del tema.',
+            'opolex'       : 'Test del Opolex personalizado.',
+            'funcionaTest' : 'Test del FuncionaTest personalizado.',
+            'failed'       : 'Test sobre preguntas falladas.',
+            'examen'       : 'Examen de lo que desees. Por ejemplo: css o ce.'
         }
         
         return commands;
@@ -77,7 +80,8 @@ module.exports = {
                         "Daypo",        //6
                         "PreparaTic",   //7
                         "Opolex",       //8
-                        "OposTestTic"   //9
+                        "OposTestTic",  //9
+                        "FuncionaTest"  //10
                         ];
 
         return autores;
@@ -186,35 +190,37 @@ module.exports = {
 
     arrayCommands: function(){
 
-        let array_commands = [  "/start",      //0
-                                "/help",       //1
-                                "/quiz",       //2
-                                "/b1",         //3
-                                "/b2",         //4
-                                "/b3",         //5
-                                "/b4",         //6
-                                "/2014",       //7
-                                "/2015",       //8
-                                "/2016",       //9
-                                "/2017",       //10
-                                "/2018",       //11
-                                "/stop",       //12
-                                "/wiki",       //13
-                                "/test",       //14
-                                "/inap",       //15
-                                "/emilio",     //16
-                                "/adams",      //17
-                                "/gokoan",     //18
-                                "/oposapiens", //19
-                                "/searches",   //20
-                                "/opositatest",//21
-                                "/daypo",      //22
-                                "/preparatic", //23
-                                "/opostestic", //24
-                                "/tema",       //25
-                                "/blocXtema",  //26
-                                "/opolex",     //27
-                                "/failed"      //28
+        let array_commands = [  "/start",       //0
+                                "/help",        //1
+                                "/quiz",        //2
+                                "/b1",          //3
+                                "/b2",          //4
+                                "/b3",          //5
+                                "/b4",          //6
+                                "/2014",        //7
+                                "/2015",        //8
+                                "/2016",        //9
+                                "/2017",        //10
+                                "/2018",        //11
+                                "/stop",        //12
+                                "/wiki",        //13
+                                "/test",        //14
+                                "/inap",        //15
+                                "/emilio",      //16
+                                "/adams",       //17
+                                "/gokoan",      //18
+                                "/oposapiens",  //19
+                                "/searches",    //20
+                                "/opositatest", //21
+                                "/daypo",       //22
+                                "/preparatic",  //23
+                                "/opostestic",  //24
+                                "/tema",        //25
+                                "/blocXtema",   //26
+                                "/opolex",      //27
+                                "/failed",      //28
+                                "/funcionaTest", //29
+                                "/exam"         //30
                             ];
 
         return array_commands;
