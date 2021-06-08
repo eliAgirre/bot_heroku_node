@@ -51,7 +51,9 @@ bot.onText(/^\/quiz/, (msg) => {
         accion_anterior = accion;
         clientMongo.findAllDocs( function ( db_questions ) {
             if(!validaciones.arrayVacio(db_questions, db_array[0] )){
-                m_datos, response = funciones.getMdatosYresponse(db_questions, m_datos, datos, preg, response);
+                //m_datos, response = funciones.getMdatosYresponse(db_questions, m_datos, datos, preg, response);
+                response = funciones.getMResponse(db_questions, m_datos, datos, preg, response);
+                m_datos = funciones.getDatosPregunta(db_questions);
                 if(m_datos.img !== undefined)
                     bot.sendPhoto(msg.chat.id, m_datos.img);
                 if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
@@ -76,7 +78,9 @@ bot.onText(/^\/blocXtema/, function(msg) {
                         temaAbuscar = tema_elegido.substring(1, 3); console.log(" blocXtema -> tema a buscar: "+temaAbuscar);
                         clientMongo.findBloqueYtema( selected[0], temaAbuscar, function ( preguntasBlocXTema ) { // consulta bloque y tema
                             if( !validaciones.arrayVacio(preguntasBlocXTema, db_array[1] ) ){                                
-                                m_datos, response = funciones.getMdatosYresponse(preguntasBlocXTema, m_datos, datos, preg, response);
+                                //m_datos, response = funciones.getMdatosYresponse(preguntasBlocXTema, m_datos, datos, preg, response);
+                                response = funciones.getMResponse(preguntasBlocXTema, m_datos, datos, preg, response);
+                                m_datos = funciones.getDatosPregunta(preguntasBlocXTema);
                                 if(m_datos.img !== undefined)
                                     bot.sendPhoto(msg.chat.id, m_datos.img);
                                 if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
@@ -100,7 +104,9 @@ bot.onText(/^\/b1|^\/b2|^\/b3|^\/b4/, (msg) => {
                 bloque_anterior = bloque_elegido;
                 clientMongo.findBloque( bloque_elegido, function ( preguntasBloque ) {
                     if( !validaciones.arrayVacio(preguntasBloque, db_array[2] ) ){ // consulta bloque
-                        m_datos, response = funciones.getMdatosYresponse(preguntasBloque, m_datos, datos, preg, response);
+                        //m_datos, response = funciones.getMdatosYresponse(preguntasBloque, m_datos, datos, preg, response);
+                        response = funciones.getMResponse(preguntasBloque, m_datos, datos, preg, response);
+                        m_datos = funciones.getDatosPregunta(preguntasBloque);
                         if(m_datos.img !== undefined)
                             bot.sendPhoto(msg.chat.id, m_datos.img);
                         if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
@@ -124,7 +130,9 @@ bot.onText(/^\/2014|^\/2015|^\/2016|^\/2017|^\/2018/, (msg) => {
                 let autorLI1 = "TAI-LI-"+anio_elegido+"-1", autorPI1 = "TAI-PI-"+anio_elegido+"-1";
                 clientMongo.findInapAnio( autorLI1, autorPI1, function ( preguntasAnio ) { // consulta INAP x anio
                     if( !validaciones.arrayVacio(preguntasAnio, db_array[3] ) ){
-                        m_datos, response = funciones.getMdatosYresponse(preguntasAnio, m_datos, datos, preg, response);
+                        //m_datos, response = funciones.getMdatosYresponse(preguntasAnio, m_datos, datos, preg, response);
+                        response = funciones.getMResponse(preguntasAnio, m_datos, datos, preg, response);
+                        m_datos = funciones.getDatosPregunta(preguntasAnio);
                         if(m_datos.img !== undefined)
                             bot.sendPhoto(msg.chat.id, m_datos.img);
                         if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
@@ -155,7 +163,9 @@ bot.onText(/^\/inap/, (msg) => {
             selected = []; } console.log("search autor: "+search_autor);
         clientMongo.findAutor( search_autor, function ( questPersonalized ) { // consulta autor
             if( !validaciones.arrayVacio(questPersonalized, db_array[4] ) ){
-                m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                //m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                response = funciones.getMResponse(questPersonalized, m_datos, datos, preg, response);
+                m_datos = funciones.getDatosPregunta(questPersonalized);
                 if(m_datos.img !== undefined)
                     bot.sendPhoto(msg.chat.id, m_datos.img);
                 if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
@@ -186,7 +196,9 @@ bot.onText(/^\/Emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
         if( temaAbuscar === undefined){ /* sin tema */ /*console.log("bloque_search: "+bloque_search); console.log("temaAbuscar: "+temaAbuscar); console.log("autor: "+autor);*/
             clientMongo.findBloqueYautor( bloque_search, autor, function ( questPersonalized ) { // consulta bloque y tema
                 if( !validaciones.arrayVacio(questPersonalized, db_array[4] ) ){
-                    m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                    //m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                    response = funciones.getMResponse(questPersonalized, m_datos, datos, preg, response);
+                    m_datos = funciones.getDatosPregunta(questPersonalized);
                     if(m_datos.img !== undefined)
                         bot.sendPhoto(msg.chat.id, m_datos.img);
                     if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
@@ -196,7 +208,9 @@ bot.onText(/^\/Emilio|^\/adams|^\/opositatest|^\/daypo|^\/preparatic|^\/opostest
         else if( temaAbuscar !== undefined){ /* con tema */ /*console.log("bloque_search: "+bloque_search); console.log("temaAbuscar: "+temaAbuscar); console.log("autor: "+autor);*/
             clientMongo.findBloqueTemaYautor( bloque_search, temaAbuscar, autor, function ( questPersonalized ) { // consulta bloque, tema y autor
                 if( !validaciones.arrayVacio(questPersonalized, "questPersonalized") ){
-                    m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                    //m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                    response = funciones.getMResponse(questPersonalized, m_datos, datos, preg, response);
+                    m_datos = funciones.getDatosPregunta(questPersonalized);
                     if(m_datos.img !== undefined)
                         bot.sendPhoto(msg.chat.id, m_datos.img);
                     if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
@@ -213,7 +227,9 @@ bot.onText(/^\/gokoan|^\/oposapiens|^\/funcionaTest/, (msg) => {
         if( search_autor === '' ){ search_autor = selected[0]; selected = []; } console.log("search_autor: ", search_autor);
         clientMongo.findAutor( search_autor, function ( questPersonalized ) { // consulta autor
             if( !validaciones.arrayVacio(questPersonalized, db_array[4] ) ){
-                m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                //m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                response = funciones.getMResponse(questPersonalized, m_datos, datos, preg, response);
+                m_datos = funciones.getDatosPregunta(questPersonalized);
                 if(m_datos.img !== undefined)
                     bot.sendPhoto(msg.chat.id, m_datos.img);
                 if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
@@ -231,7 +247,9 @@ bot.onText(/^\/failed/, (msg) => {
             if(!validaciones.arrayVacio(array_enunciado, "array_enunciado" )){
                 array_enunciado = funciones.shuffle(array_enunciado);
                 clientMongo.findEnunciadoDocs( array_enunciado[i], function ( failed_questions ) {
-                    m_datos, response = funciones.getMdatosYresponse(failed_questions, m_datos, datos, preg, response);
+                    //m_datos, response = funciones.getMdatosYresponse(failed_questions, m_datos, datos, preg, response);
+                    response = funciones.getMResponse(failed_questions, m_datos, datos, preg, response);
+                    m_datos = funciones.getDatosPregunta(failed_questions);
                     if(m_datos.img !== undefined)
                         bot.sendPhoto(msg.chat.id, m_datos.img);
                     if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }
@@ -256,7 +274,9 @@ bot.onText(/^\/exam/, (msg) => {
         accion_anterior = accion;
         clientMongo.findRegExpEnunciado( examUser, function ( questPersonalized ) { // consulta whatever
             if( !validaciones.arrayVacio(questPersonalized, db_array[4] ) ){
-                m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                //m_datos, response = funciones.getMdatosYresponse(questPersonalized, m_datos, datos, preg, response);
+                response = funciones.getMResponse(questPersonalized, m_datos, datos, preg, response);
+                m_datos = funciones.getDatosPregunta(questPersonalized);
                 if(m_datos.img !== undefined)
                     bot.sendPhoto(msg.chat.id, m_datos.img);
                 if(cont === 0){ if(marcha === 0){ empiece = new Date(); marcha = cronometro.empezar(marcha);  console.log(c_marcha, marcha); console.log(c_empiece, empiece); } cont++; /* cronometro*/ }

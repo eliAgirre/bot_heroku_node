@@ -560,6 +560,26 @@ module.exports = {
 
     },
 
+    getMdatos: function(arrayPreg, m_datos, datos, preg ){
+
+      arrayPreg = this.shuffle(arrayPreg);
+      let mdatos = this.getDatosPregunta(arrayPreg)
+      datos = this.getDatos(datos, m_datos);
+      preg = this.getDatosPreg(preg, m_datos);
+      return mdatos;
+
+    },
+
+    getMResponse: function(arrayPreg, m_datos, datos, preg, response ){
+
+      arrayPreg = this.shuffle(arrayPreg);
+      m_datos = this.getDatosPregunta(arrayPreg), response = this.getResponse(m_datos);
+      datos = this.getDatos(datos, m_datos);
+      preg = this.getDatosPreg(preg, m_datos);
+      return response;
+
+    },
+
     getComandoAutor: function(selected, com){
 
       switch(selected){
